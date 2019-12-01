@@ -10,7 +10,7 @@ import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.shape.Shape
 import osiris.vector._
-import osiris.vector.space.VectorSpace
+import osiris.vector.space.{MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
@@ -36,7 +36,10 @@ class Variable[I,S](val init:Vector[I,S]) extends Pin[I,S] {
 
   }
 
-  override def toString():String = s"Variable = $data"
+  override def toString():String = space match {
+    case (_:MatrixSpace[_,_,S]) => s"Variable =\n $value"
+    case _ => s"Variable = $value"
+  }
 
   def set(value:Vector[I,S]): Unit = {
     data = value

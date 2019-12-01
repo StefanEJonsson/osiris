@@ -12,7 +12,7 @@ import osiris.pin.node.Node
 import osiris.evaluator.Environment
 import osiris.function
 import osiris.shape.Shape
-import osiris.vector.space.{EmptySpace, VectorSpace}
+import osiris.vector.space.{EmptySpace, MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
@@ -46,7 +46,10 @@ class Parameter[I,S](val name:String, init:Vector[I,S])
 
   }
 
-  override def toString():String = s"Parameter $name = $param"
+  override def toString():String = space match {
+    case (_:MatrixSpace[_,_,S]) => s"Parameter $name =\n $param"
+    case _ => s"Parameter $name = $param"
+  }
 
   def set(value:Vector[I,S]): Unit = synchronized {
     param = value

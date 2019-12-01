@@ -3,12 +3,16 @@
 
 package osiris
 
+import osiris.vector.space.SequentialSpace
+
 trait ScalarSpace[S] {
 
   type Type = S
 
   val zero:S
   val one:S
+
+  def ^(n:Int):SequentialSpace[S] = until(n) --> this
 
   def serialize(s:S):Iterable[Byte]
 

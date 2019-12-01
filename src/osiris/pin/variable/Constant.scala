@@ -10,7 +10,7 @@ import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.shape.Shape
 import osiris.vector._
-import osiris.vector.space.VectorSpace
+import osiris.vector.space.{MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
@@ -34,7 +34,10 @@ class Constant[I,S] (value:Vector[I,S]) extends Pin[I,S] {
 
   }
 
-  override def toString():String = s"Constant = $value"
+  override def toString():String = space match {
+    case (_:MatrixSpace[_,_,S]) => s"constant =\n $value"
+    case _ => s"Constant = $value"
+  }
 
 }
 

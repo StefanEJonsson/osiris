@@ -18,7 +18,7 @@ trait Evaluator {
 
   def gradients(pins:Pin[_,_]*):Environment = eval(Set(),pins)
 
-  def gradient[I,S](pin:Pin[I,S]):Vector[I,S] = gradients(pin)(pin)
+  def gradient[I,S](pin:Pin[I,S]):Vector[I,S] = gradients(pin).feedback(pin)
 
 }
 
