@@ -188,6 +188,8 @@ Dynamic models are models that change their structure depending on the input dat
 * Use `osiris.evaluator.delete(myPin)` - Deletes pin along with all pins that myPin depends on but don't have any other pins depending on them. 
 * Use `myImprover.disconnect()` - disconnects your parameters from everything, giving you a fresh start.
 
+Just as for the static models, the general principle should be that you can program just as you would otherwise. If you like imperative programming, you can do that. If you like functional programming, you can do that (recursive functions are allowed for example). 
+
 ### Scalar and Vector Functions
 
 osiris.function.ScalarFunction contains a collection of standard functions R --> R such as Sin, Exp. They can be composed with `<<`.
