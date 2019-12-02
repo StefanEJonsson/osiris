@@ -8,7 +8,7 @@ Open source Stepwise Improvement Routines In Scala (osiris) is an API for buildi
 1. Download osiris.jar
 1. Add osiris.jar to your libraryDependencies (how you do this depends on which IDE/build tool you are using)
 
-A simple example of how the API is used can be found in examples/SineRecognizer.scala. It contains a simple neural network that is trained to distinguish between sinewaves with random phase and completely random data.
+A simple example of how the API is used can be found in examples/SineRecognizer.scala. It contains a simple neural network that is trained to distinguish between sine waves with random phase and completely random data.
 
 ## Tutorial
 
@@ -19,12 +19,12 @@ The API has the following basic building blocks
 * Vectors
 * Pins
 * Morphisms
-* ScalarFunctions
-* VectorFunction
+* Scalar Functions
+* Vector Function
 
 A scalar is simply a number (represented either as float or double).
 A vector is a list of scalars, table of scalars or some other structure containing scalars.
-Every vector has a shape. A shape is a set of indicies. If a vector `x` has {1 2 3} as its shape, then `x(1)`, `x(2)` and `x(3)` are scalars. `x(0)` however is not defined since `0` is not included in the shape of `x`.
+Every vector has a shape. A shape is a set of indices. If a vector `x` has {1 2 3} as its shape, then `x(1)`, `x(2)` and `x(3)` are scalars. `x(0)` however is not defined since `0` is not included in the shape of `x`.
 
 ### Shapes
 
@@ -34,7 +34,7 @@ There are four basic ways to construct shapes:
 * `O` represents the empty set.
 * `I` represents a set containing only one element. {()}
 
-Shapes can be combined using addition and multiplication to create more complex shapes. Addition in this case means tagged union and multiplication means carteasean product.
+Shapes can be combined using addition and multiplication to create more complex shapes. Addition in this case means tagged union and multiplication means cartesian product.
 
 If `a = range(-1,1)` and `b = upto(2)` then
 
@@ -43,21 +43,21 @@ If `a = range(-1,1)` and `b = upto(2)` then
 
 ### Vector- and Scalar Spaces
 
-You can pick a scalar space by writing `R = F32` (or F64) at the beginning of your code. In most projects you will probably use the same scalarspace for all computations but it is possible to switch.
+You can pick a scalar space by writing `R = F32` (or F64) at the beginning of your code. In most projects you will probably use the same scalar space for all computations but it is possible to switch.
 
-You can create vector spaces by combining a shape with a scalarspace as follows: `val space = upto(5) --> R`. `R^n` is shorthand for `upto(n) --> R`.
+You can create vector spaces by combining a shape with a scalar space as follows: `val space = upto(5) --> R`. `R^n` is shorthand for `upto(n) --> R`.
 
 `(I --> R)` is a vector space that is basically equivalent to the scalar space R. The only difference is that now it is treated as a vector space, not a scalar space.
 
-If you use a shape that is the cartesean product of two smaller shapes, then the resulting vector space is called a matrix space. The space of all 3 by 5 (zero-indexed) matricies is constructed as follows: `(until(3) * until(5)) --> R`.
+If you use a shape that is the cartesian product of two smaller shapes, then the resulting vector space is called a matrix space. The space of all 3 by 5 (zero-indexed) matrices is constructed as follows: `(until(3) * until(5)) --> R`.
 
-Vectorspaces can be combined just like shapes:
+Vector spaces can be combined just like shapes:
 
 `(a --> R) + (b --> R)` is equivalent to `(a + b) --> R`. 
 
 `(a --> R) * (b --> R)` is equivalent to `(a * b) --> R`.
 
-This means that a matrix space can also be constructed by simply multiplying together the corresponding vectorspaces.
+This means that a matrix space can also be constructed by simply multiplying together the corresponding vector spaces.
 
 ### Vectors
 
@@ -81,8 +81,8 @@ If `x` and `y` are vectors of spaces `V` and `U` respectively then `x | y` is th
 
 There are various arithmetic operations defined on vectors, such as addition, subtraction multiplication with scalars, summation and negation. The following notation is used for the different types of products:
 
-* `*` is used to multiply vectors by matricies, matricies by matricies or matricies by vectors. It is also used to multiply vectors by scalars.
-* `o` denotes elementwise multiplication between two vectors of the same shape.
+* `*` is used to multiply vectors by matrices, matrices by matrices or matrices by vectors. It is also used to multiply vectors by scalars.
+* `o` denotes element wise multiplication between two vectors of the same shape.
 * `<>` denotes the inner product of two vectors of the same shape.
 * `><` denotes the outer product of two vectors.
 
@@ -172,14 +172,14 @@ I would suggest this procedure for building static models:
 1. When you have created the output pin (the pin representing the final result of your computation) combine it with your label pin to produce an error pin
 1. Connect your error pin to an Objective
 
-Note that even though you never have to create helper functions when creating static models, doing so might sometimes simplify your code. I would recomend structuring your code in the same way you would if you were writing an ordinary program (not involving deep learning). For example:
+Note that even though you never have to create helper functions when creating static models, doing so might sometimes simplify your code. I would recommend structuring your code in the same way you would if you were writing an ordinary program (not involving deep learning). For example:
 
 ```scala
 def layer[I,J](x:Pin[J,R],weight:MatrixPin[I,J,R],bias:Pin[I,R]):Pin[I,R] = 
   (weight*x + bias).map(relu)
 ```
 
-might be an excelent way to remove code duplication if you use many layers.
+might be an excellent way to remove code duplication if you use many layers.
 
 In example/SineRecognizer.scala there is another example of how helper functions can be used. In that example, the helper function describes the whole computation of the network but only on a single data point. The output pin is then obtained by applying that function to the input variable (representing a whole batch of data points) using rowMap.
 
@@ -220,9 +220,9 @@ This results in a convolution operator that uses a filter of size 7 (-3 to 3) to
 
 
 ```scala
-val filter = (range(-3,3) --> R).parameter("filter")(_ => random()) //construct a filter parameter and initalize it randomly
+val filter = (range(-3,3) --> R).parameter("filter")(_ => random()) //construct a filter parameter and initialize it randomly
 
-val x = (upto(10) --> R).variable.zeros   //construct a data variable and intialize it to zero
+val x = (upto(10) --> R).variable.zeros   //construct a data variable and initialize it to zero
 
 val y = myConvOp(filter,x)                //analyze data using filter
 ```
@@ -231,7 +231,7 @@ val y = myConvOp(filter,x)                //analyze data using filter
 There is a special kind of function called bilinear functions. They take two (vector) input arguments and produce one (vector) output. If the first input arguments of a bilinear function is held constant the function is linear with respect to the second argument. If the second is held constant it is linear with respect to the first. Examples of such functions include:
 
 * Ordinary Multiplication of Numbers
-* Elementwise Multiplication of Vectors
+* Element wise Multiplication of Vectors
 * Inner Products
 * Outer Products
 * Matrix Products
@@ -249,9 +249,9 @@ osiris.evaluator contains the algorithms needed to actually compute the values o
 
 Use `val myEvaluator = osiris.evaluator.Evaluator()` for single threaded evaluation.
 
-Use `val myEvaluator = osiris.evaluator.Evaluator(n)` for multithreaded evaluation with n threads.
+Use `val myEvaluator = osiris.evaluator.Evaluator(n)` for multi threaded evaluation with n threads.
 
-I recomend using multithreaded evaluation with n = #virtual cores on your computer. However this is only faster if there is a significant amount of computations to do in parallell. If your computation graphs are small or consist of very sequential computations, use singlethreaded instead.
+I recommend using multi threaded evaluation with n = #virtual cores on your computer. However this is only faster if there is a significant amount of computations to do in parallel. If your computation graphs are small or consist of very sequential computations, use single threaded instead.
 
 Use `val xVal = myEvaluator.value(x)` to get the value of the pin x. (Note that xVal is of type vector and x of type pin).
 
