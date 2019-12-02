@@ -241,7 +241,7 @@ There is a special operator called the tensor product that takes two bilinear op
 
 * In this API it is denoted `&`
 * `val conv2d = myConvOp & myConvOp` constructs 2 dimensional convolution
-* `val filterOp = new osiris.function.bilinear.MatrixVectorProduct(upto(n) --> R, upto(m) --> R) & conv2d` constructs the transformation that is usually used to build convolutional neural networks.
+* `val filterOp = new MatrixVectorProduct(upto(n) --> R, upto(m) --> R) & conv2d` constructs the transformation that is usually used to build convolutional neural networks.
 
 ### Evaluators and Improvers
 
