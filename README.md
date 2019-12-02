@@ -156,6 +156,10 @@ If a pin is connected to an objective with negative strength, the improver will 
 
 If multiple objectives are used in the same model, a linear combination of the objectives will be optimized (determined by strength).
 
+### Models
+
+A model is a collection of parameters along with a set of computations that are to be done using those parameters along with a set of objectives to achieve with those computations. Models are build using pins and the associated operations
+
 #### Static Models
 
 Static models are models whose structure do not change depending on the input data. Examples of this would be ordinary neural networks or convolutional neural networks (if we assume that all images in our dataset have the same dimension).
