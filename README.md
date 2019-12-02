@@ -6,7 +6,7 @@ Open source Stepwise Improvement Routines In Scala (osiris) is an API for buildi
 
 1. Install java and scala if you haven't already: https://www.scala-lang.org/download/
 1. Download osiris.jar
-1. Add osiris.jar to your classpath/libraryDependencies (how you do this depends on which IDE/build tool you are using)
+1. Add osiris.jar to your libraryDependencies (how you do this depends on which IDE/build tool you are using)
 
 A simple example of how the API is used can be found in examples/SineRecognizer.scala. It contains a simple neural network that is trained to distinguish between sinewaves with random phase and completely random data.
 
@@ -43,15 +43,15 @@ If `a = range(-1,1)` and `b = upto(2)` then
 
 ### Vector- and Scalar Spaces
 
-You can pick a scalar space by writing `R = F32` (or F64) at the beginning of your code. In most projects you will probably use the same scalarspace for all computations but it is possible to switch if you want to tailor the precision to each part of your computation graph.
+You can pick a scalar space by writing `R = F32` (or F64) at the beginning of your code. In most projects you will probably use the same scalarspace for all computations but it is possible to switch.
 
-You can create vector spaces by combining a shape with a scalarspace as follows: `val space = upto(5) --> R`. `R^n` can be used as shorthand for `upto(n) --> R`.
+You can create vector spaces by combining a shape with a scalarspace as follows: `val space = upto(5) --> R`. `R^n` is shorthand for `upto(n) --> R`.
 
-`(I --> R)` is a vector space that is basically equivalent to the scalar space R. The only difference is that now it is treated as a vector space and not a scalar space.
+`(I --> R)` is a vector space that is basically equivalent to the scalar space R. The only difference is that now it is treated as a vector space, not a scalar space.
 
-If you use a shape that is the cartesean product of two simpler shapes, then the resulting vector space is called a matrix space. The space of all 3 by 5 (zero-indexed) matricies is created as follows: `(until(3) * until(5)) --> R`.
+If you use a shape that is the cartesean product of two smaller shapes, then the resulting vector space is called a matrix space. The space of all 3 by 5 (zero-indexed) matricies is constructed as follows: `(until(3) * until(5)) --> R`.
 
-Vectorspaces can be combined in the same way as shapes:
+Vectorspaces can be combined just like shapes:
 
 `(a --> R) + (b --> R)` is equivalent to `(a + b) --> R`. 
 
@@ -65,11 +65,11 @@ If `V` is a vector space, the following methods can be used to construct vectors
 
 * `V.zeros` - constructs a vector containing only zeros
 * `V.ones` - constructs a vector containing only ones
-* `V.fill(x)` - constructs a vector containing only the value of x
-* `V.unit(i)` - constructs a vector containing a one at index i and zeros at all other indicies
+* `V.fill(x)` - constructs a vector containing only the value x
+* `V.unit(i)` - constructs a vector containing a one at index i and zeros at all other positions
 * `V.units(predicate)` - constructs a vector containing ones everywhere where predicate returns true and zeros elsewhere. The predicate must be a morphism. More on morphisms later.
-* `V(f)` - constructs a vector containing the scalar f(i) at index i. f can be a function of lambda expression
-* `V.open(file)` - opens a vector saved in a file
+* `V(f)` - constructs a vector by computing the value f(i) at every index i. f can be a function or lambda expression.
+* `V.open(file)` - opens a vector saved in a file.
 
 If `V` is also a matrix space, the following methods can also be used:
 
@@ -77,18 +77,18 @@ If `V` is also a matrix space, the following methods can also be used:
 * `V.cols(f)` - constructs a matrix containing the vector f(j) at column index j.
 * `V.identity` - constructs the identity matrix (only works for square spaces).
 
-If `x` and `y` are vectors of spaces `V` and `U` respectively then `x | y` is the concatenation of the two vectors and belongs to the vector space `U + V`.
+If `x` and `y` are vectors of spaces `V` and `U` respectively then `x | y` is the concatenation of the vectors and belongs to the vector space `U + V`.
 
 There are various arithmetic operations defined on vectors, such as addition, subtraction multiplication with scalars, summation and negation. The following notation is used for the different types of products:
 
 * `*` is used to multiply vectors by matricies, matricies by matricies or matricies by vectors. It is also used to multiply vectors by scalars.
-* `o` is elementwise multiplication between two vectors of the same shape.
-* `<>` is the inner product of two vectors of the same shape.
-* `><` is the outer product of two vectors of the same shape.
+* `o` denotes elementwise multiplication between two vectors of the same shape.
+* `<>` denotes the inner product of two vectors of the same shape.
+* `><` denotes the outer product of two vectors.
 
 #### Morphisms and Reindexing
 
-A morphism is a function between two shapes. They are used to modify the shape of a vector. 
+A morphism is a function between two shapes. They are used in reindexing operations.
 
 Let `a` and `b` be shapes.
 
@@ -100,9 +100,9 @@ If we define the vector `y` as:
 
 `val y = x.reindex(f)`
 
-then `y` have shape `a` and for every index `i` in this shape `y(i)` will be equal to `x(f(i))`.
+then `y` has shape `a` and for every index `i` in `a`, `y(i)` will be equal to `x(f(i))`.
 
-Basically `y` has the same elements as `x` but a new shape.
+Basically `y` has the same elements as `x` but it can be shaped differently and the elements can appear in a different order. 
 
 ### Pins
 
@@ -113,9 +113,9 @@ There are four types of pins:
 * Parameters
 * Output Pins
 
-Constants represent vectors that are not supposed to be changed after they are created. Variables on the other hand can be changed. When a variable is changed, all pins that depend on that variable are automatically updated. Parameters are also vectors that can change. But parameters are not supposed to be changed by the programmer. Instead, parameters are adjusted automatically by the machine learning algorithm (improver).
+Constants represent vectors that cannot be changed after they are created. Variables on the other hand can be changed. When a variable is changed, all pins that depend on that variable are automatically updated. Parameters also represent vectors that can change. But parameters are not supposed to be changed by the programmer. Instead, parameters are adjusted automatically by the machine learning algorithm (improver).
 
-Constants, variables and parameters are constructed almost the same way as ordinary vectors. If V is a vector space, the following lines can be used to construct constants, variables and parameters.
+Constants, variables and parameters are constructed almost the same way as vectors. If V is a vector space, the following lines show how constants, variables and parameters are constructed:
 
 * `val myConstant = V.constant.ones` - creates a constant containing only ones.
 * `val myVariable = V.variable.unit(i)` - creates a variable initialized with a vector containing a one at index i and zeros elsewhere.
@@ -123,7 +123,7 @@ Constants, variables and parameters are constructed almost the same way as ordin
 
 Note that parameters have to be assigned a name. This is so that they can be saved in files during/after training.
 
-If a file already exists with the same name as your parameter, the initialization is discarded and the parameter is initialized using whatever is stored in the file instead. Note that parameters are opened automatically, but they are not saved automatically. In order to save a parameter, use `myParameter.save()`.
+If a file already exists with the same name as your parameter, the parameter is opened from that file. In that case it will ignore your assignment `(i => 3*i + 1)` in this case, and just use the file instead. In order to save a parameter, use `myParameter.save()`.
 
 ### Output Pins
 
@@ -136,7 +136,7 @@ z = z + x3
 z = z + x4
 ```
 
-Changing a variable referring to a pin does not change the underlying pin. Instead a new pin is constructed as a result of the operation and stored in same variable. The old pin will still exist in the background and the new pin will have a reference to the old pin so that changing any of the variables x1 through x4 will have the desired effect on z and so that the backpropagation algorithm will work as it should.
+Changing a variable referring to a pin does not change the underlying pin. Instead a new pin is constructed as a result of the operation. Even though the variable z now refers to a new pin, the old pin will still exist in the background. The code above is equivalent to `z = x1 + x2 + x3 + x4`.
 
 #### Objectives
 
@@ -144,7 +144,7 @@ An objective represents a goal that you want to achieve with your algorithm. An 
 
 `val goal = new Objective(strength)`
 
-and you can connect a pin to it:
+You can connect a pin to it:
 
 `myPin ->- goal`
 
@@ -154,17 +154,17 @@ If a pin is connected to an objective with positive strength, the improver will 
 
 If a pin is connected to an objective with negative strength, the improver will try to minimize it.
 
-If multiple objectives are used in the same model, a linear combination of the objectives will be optimized (determined by strength).
+If multiple objectives are used in the same model, a linear combination of the objectives will be optimized (determined by their strengths).
 
 ### Models
 
-A model is a collection of parameters along with a set of computations that are to be done using those parameters along with a set of objectives to achieve with those computations. Models are build using pins and the associated operations
+A model is a set of parameters, a set of computations that are to be done using those parameters along with a set of objectives to achieve with those computations. Models are built using pins and the associated operations
 
 #### Static Models
 
-Static models are models whose structure do not change depending on the input data. Examples of this would be ordinary neural networks or convolutional neural networks (if we assume that all images in our dataset have the same dimension).
+Static models are models whose structure do not change depending on the input data. Examples of this would be an ordinary neural network or a convolutional neural network (if we assume that all images in our dataset have the same dimensions).
 
-I suggest this procedure:
+I would suggest this procedure for building static models:
 
 1. Define all your parameters
 1. Create variables for the data (usually one for the inputs and one for the labels)
@@ -179,13 +179,13 @@ def layer[I,J](x:Pin[J,R],weight:MatrixPin[I,J,R],bias:Pin[I,R]):Pin[I,R] =
   (weight*x + bias).map(relu)
 ```
 
-Might be an excelent way to remove code duplication.
+might be an excelent way to remove code duplication if you use many layers.
 
-In example/SineRecognizer.scala there is another example of how helper functions can be used. In that example, the helper function describes the whole computation of the network but only on a single data point. The output pin is then obtained by applying that function to an input variable representing a whole batch of data points using row map.
+In example/SineRecognizer.scala there is another example of how helper functions can be used. In that example, the helper function describes the whole computation of the network but only on a single data point. The output pin is then obtained by applying that function to the input variable (representing a whole batch of data points) using rowMap.
 
 #### Dynamic Models
 
-Dynamic models are models that change their structure depending on the input data. An example of this is a recurrent neural network (the depth of network is equal to the length of the input list). In this case variables won't help you much. It is better to represent input data with constants (create new ones every time you use new data). Write one function that does the whole computation (takes a pin as input and generates pin as output). This also means that you have to construct new Objectives every time you use new data. Extra care has to be taken so that old objectives are not kept in place as the new ones are added (continuing to generate feedback to the parameters based on old data). This can be done in four ways:
+Dynamic models are models that change their structure depending on the input data. An example of this is a recurrent neural network (the depth of the network is equal to the length of the input list). In this case, variables won't help you much. It is better to represent input data with constants (create new ones every time you use new data). Write one function that does the whole computation (takes a pin as input and generates pin as output). This also means that you have to construct new Objectives every time you use new data. Extra care has to be taken so that old objectives are not kept in place as the new ones are added (continuing to generate feedback to the parameters based on old data). This can be done in four ways:
 
 * Don't construct new objectives. Use a global value representing an objective that can be reused throughout multiple iterations. Old pins are automatically disconnected when a new pin is connected to an objective.
 * Disconnect manually using `pin -/- objective`
@@ -210,13 +210,13 @@ For relu write:
 
 Scalar functions are used for map operations. If `x` is a vector and `f` is a scalar function, then `x.map(f)` creates a new vector by applying `f` on every element of `x`. This can also be done using a lambda expression (Pin[Unit,R] => Pin[Unit,R]).
 
-The rest of the osiris.function package consists of vector functions. You usually don't have to use these Instead use the ordinary arithmetic operations on pins (they use vector functions in the background). There are however some functions (convolution, complex multiplication, fourier transform) that can not be accessed that way. 
+The rest of the osiris.function package consists of vector functions. You usually don't have to use them. Instead you should use the ordinary arithmetic operations on pins (they use vector functions in the background). There are however some functions (convolution, complex multiplication, fourier transform) that can not be accessed that way. 
 
 Convolution operators are constructed as follows:
 
 `val myConvOp = new osiris.function.bilinear.Convolution(range(-3,3) --> R, until(10) --> R, until(8) --> R)`
 
-This results in a convolution operator that uses a filter of size 7 (-3 to 3) to transforms a vector of size 10 to a new vector of size 8. In most application you will want to use a filter shape that is symmetric around zero.
+This results in a convolution operator that uses a filter of size 7 (-3 to 3) to transform a vector of size 10 to a new vector of size 8. In most application you will want to use a filter shape that is symmetric around zero.
 
 
 ```scala
@@ -237,7 +237,7 @@ There is a special kind of function called bilinear functions. They take two (ve
 * Matrix Products
 * Convolution
 
-There is a special operator called the tensor product that takes two bilinear operations and produces a new bilinear operation. I will not go in to too much detail here, but the following is good to know:
+There is a special operator called the tensor product that takes two bilinear functions and produces a new bilinear function. I will not go in to too much detail here, but the following is good to know:
 
 * In this API it is denoted `&`
 * `val conv2d = myConvOp & myConvOp` constructs 2 dimensional convolution
