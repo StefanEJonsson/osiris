@@ -77,7 +77,7 @@ If `V` is also a matrix space, the following methods can also be used:
 * `V.cols(f)` - constructs a matrix containing the vector f(j) at column index j.
 * `V.identity` - constructs the identity matrix (only works for square spaces).
 
-If `x` and `y` are vectors of spaces `V` and `U` respectively then `x | y` is the concatenation of the vectors and belongs to the vector space `U + V`.
+If `x` and `y` are vectors from spaces `V` and `U` respectively then `x | y` is the concatenation of the vectors and belongs to the vector space `V + U`.
 
 There are various arithmetic operations defined on vectors, such as addition, subtraction multiplication with scalars, summation and negation. The following notation is used for the different types of products:
 
