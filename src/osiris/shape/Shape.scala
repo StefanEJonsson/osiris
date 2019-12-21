@@ -51,7 +51,7 @@ object Shape {
       case S.sum => {
         val a = deserialize(bytes)
         val b = deserialize(bytes)
-        new Sum[a.Type,b.Type](a.asInstanceOf[Shape[a.Type]],b.asInstanceOf[Shape[b.Type]]) //TODO seems unnecessarily complicated
+        new Sum[a.Type,b.Type](a.asInstanceOf[Shape[a.Type]],b.asInstanceOf[Shape[b.Type]])
       }
       case S.product => {
         val a = deserialize(bytes)

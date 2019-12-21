@@ -27,6 +27,8 @@ trait AbelianProperty[F[_,_]] {
     def serialize:Iterable[Byte] =
       code ++ Iterable(utilities.Serialization.Morphism.commute) ++ a.serialize ++ b.serialize
 
+    override def toString():String = s"${AbelianProperty.this}.commute($a,$b)"
+
   }
 
 }

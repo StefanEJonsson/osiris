@@ -33,6 +33,8 @@ trait Distributivity[F[_,_],G[_,_]] {
     def serialize:Iterable[Byte] =
       Iterable(utilities.Serialization.Morphism.distrLeft) ++ a.serialize ++ b.serialize ++ c.serialize
 
+    override def toString():String = s"leftDistr($a,$b,$c)"
+
   }
 
   def rightDistr[A,B,C](a:Shape[A],b:Shape[B],c:Shape[C]) = new Isomorphism[F[G[A,B],C],G[F[A,C],F[B,C]]] {
@@ -46,6 +48,8 @@ trait Distributivity[F[_,_],G[_,_]] {
 
     def serialize:Iterable[Byte] =
       Iterable(utilities.Serialization.Morphism.distrRight) ++ a.serialize ++ b.serialize ++ c.serialize
+
+    override def toString():String = s"rightDistr($a,$b,$c)"
 
   }
 
@@ -62,6 +66,8 @@ trait Distributivity[F[_,_],G[_,_]] {
       def serialize:Iterable[Byte] =
         Iterable(utilities.Serialization.Morphism.extractLeft) ++ a.serialize ++ b.serialize ++ c.serialize
 
+      override def toString():String = s"leftExtract($a,$b,$c)"
+
     }
 
   def rightExtract[A,B,C](a:Shape[A],b:Shape[B],c:Shape[C]):Isomorphism[G[F[A,C],F[B,C]],F[G[A,B],C]] =
@@ -76,6 +82,8 @@ trait Distributivity[F[_,_],G[_,_]] {
 
       def serialize:Iterable[Byte] =
         Iterable(utilities.Serialization.Morphism.extractRight) ++ a.serialize ++ b.serialize ++ c.serialize
+
+      override def toString():String = s"rightExtract($a,$b,$c)"
 
     }
 

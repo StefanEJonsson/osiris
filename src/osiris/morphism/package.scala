@@ -14,6 +14,8 @@ package object morphism {
 
     val inverse = this
 
+    override def toString():String = s"id($shape)"
+
     def apply(x:A):A = x
 
     def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Morphism.id) ++ shape.serialize
@@ -24,6 +26,8 @@ package object morphism {
 
     val domain = shape
     val target = I
+
+    override def toString():String = s"unit($shape)"
 
     def apply(x:A):Unit = ()
 
@@ -38,6 +42,8 @@ package object morphism {
 
     lazy val monoInverse:Morphism[A,Either[Nothing,Unit]] = sum.right[Nothing,Unit](O,I) << unit(shape)
 
+    override def toString():String = s"absurd($shape)"
+
     def apply(x:Nothing):A = utilities.absurd(x)
 
     def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Morphism.absurd) ++ shape.serialize
@@ -51,6 +57,8 @@ package object morphism {
     val target = shape
 
     lazy val monoInverse:Morphism[A,Either[Unit,Unit]] = bool.equals(shape,a)
+
+    override def toString():String = s"constant($shape,$a)"
 
     def apply(x:Unit):A = a
 

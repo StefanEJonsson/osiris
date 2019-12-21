@@ -34,7 +34,7 @@ class RowCopy[I,J,S](outer:VectorSpace[I,S],inner:VectorSpace[J,S]) extends Line
   val domain = inner
   val target = outer*inner
 
-  def apply(x:Vector[J,S]):Vector[(I,J),S] = x.reIndex(target,product.right[I,J](outer.shape,inner.shape))
+  def apply(x:Vector[J,S]):Vector[(I,J),S] = x.reIndex(target,product.second[I,J](outer.shape,inner.shape))
 
   def feedback = new ColSum(outer,inner)
 
@@ -45,7 +45,7 @@ class ColCopy[I,J,S](outer:VectorSpace[I,S],inner:VectorSpace[J,S]) extends Line
   val domain = outer
   val target = outer*inner
 
-  def apply(x:Vector[I,S]):Vector[(I,J),S] = x.reIndex(target,product.left[I,J](outer.shape,inner.shape))
+  def apply(x:Vector[I,S]):Vector[(I,J),S] = x.reIndex(target,product.first[I,J](outer.shape,inner.shape))
 
   def feedback = new RowSum(outer,inner)
 

@@ -27,6 +27,8 @@ object bool {
     val target = I + I
     val domain = shape*shape
 
+    override def toString():String = s"equal($shape)"
+
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.equal) ++ shape.serialize
 
     def apply(x: (A, A)): BOOL = x._1 == x._2
@@ -40,6 +42,8 @@ object bool {
     val target = I + I
     val domain = target*target
 
+    override def toString():String = s"and"
+
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.and)
 
     def apply(x:(BOOL,BOOL)):BOOL = x._1 && x._2
@@ -51,6 +55,8 @@ object bool {
     val target = I + I
     val domain = target*target
 
+    override def toString():String = s"or"
+
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.or)
 
     def apply(x:(BOOL,BOOL)):BOOL = x._1 || x._2
@@ -61,6 +67,8 @@ object bool {
 
     val target = I + I
     val domain = target*target
+
+    override def toString():String = s"xor"
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.xor)
 

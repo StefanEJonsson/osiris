@@ -15,6 +15,8 @@ object sum extends Bifunctor[+] with Monoidicity[+,Nothing] with AbelianProperty
 
   protected def code = Iterable(utilities.Serialization.Morphism.sum)
 
+  override def toString():String = "sum"
+
   //bifunctoriality
 
   def bim[L1,L2,R1,R2](l:Morphism[L1,L2],r:Morphism[R1,R2]): Morphism[+[L1,R1],+[L2,R2]] =
@@ -22,6 +24,8 @@ object sum extends Bifunctor[+] with Monoidicity[+,Nothing] with AbelianProperty
 
       val domain = l.domain + r.domain
       val target = l.target + r.target
+
+      override def toString():String = s"${sum.this}.bimap($l,$r)"
 
       def serialize: Iterable[Byte] =
         Iterable(utilities.Serialization.Morphism.sum,utilities.Serialization.Morphism.bimap) ++
@@ -66,6 +70,8 @@ object sum extends Bifunctor[+] with Monoidicity[+,Nothing] with AbelianProperty
     val domain = shape + shape
     val target = shape
 
+    override def toString():String = s"join($shape)"
+
     def apply(x:Either[A,A]):A = x match {
       case  Left(x) => x
       case Right(x) => x
@@ -89,6 +95,8 @@ object sum extends Bifunctor[+] with Monoidicity[+,Nothing] with AbelianProperty
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.left) ++ l.serialize ++ r.serialize
 
+    override def toString():String = s"sum.left($l,$r)"
+
   }
 
   def right[A,B](l:Shape[A],r:Shape[B]) = new Monomorphism[B,+[A,B]] {
@@ -101,6 +109,8 @@ object sum extends Bifunctor[+] with Monoidicity[+,Nothing] with AbelianProperty
     def apply(x:B):Either[A,B] = Right(x)
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.right) ++ l.serialize ++ r.serialize
+
+    override def toString():String = s"sum.right($l,$r)"
 
   }
 

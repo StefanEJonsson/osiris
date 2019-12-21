@@ -39,8 +39,8 @@ trait Container[I,S] extends (I => S) {
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 
-  def toRowVector:Table[Unit,I,S] = this.reIndex[(Unit,I)](product.right(I,space.shape)).asTable
+  def toRowVector:Table[Unit,I,S] = this.reIndex[(Unit,I)](product.second(I,space.shape)).asTable
 
-  def toColVector:Table[I,Unit,S] = this.reIndex[(I,Unit)](product.left(space.shape,I)).asTable
+  def toColVector:Table[I,Unit,S] = this.reIndex[(I,Unit)](product.first(space.shape,I)).asTable
 
 }

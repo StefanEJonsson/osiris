@@ -17,6 +17,8 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
   protected def code = Iterable(utilities.Serialization.Morphism.product)
 
+  override def toString():String = "product"
+
   //Bifunctoriality
 
   def bim[L1,L2,R1,R2](l:Morphism[L1,L2],r:Morphism[R1,R2]): Morphism[*[L1,R1],*[L2, R2]] =
@@ -25,13 +27,14 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
       val domain = l.domain * r.domain
       val target = l.target * r.target
 
+      override def toString():String = s"${product.this}.bimap($l,$r)"
+
       def serialize:Iterable[Byte] =
         Iterable(utilities.Serialization.Morphism.bimap) ++
         l.serialize ++ r.serialize
 
       def apply(x: *[L1,R1]): *[L2,R2] = (l(x._1),r(x._2))
     }
-    //(x: Tuple2[L1, R1]) => (l(x._1), r(x._2)) //TODO
 
   //Monoidicity
 
@@ -80,6 +83,8 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     lazy val inverse = spookLeft(shape)
 
+    override def toString():String = s"bustLeft($shape)"
+
     def apply(x:(A,Nothing)):Nothing = x._2
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.bustLeft) ++ shape.serialize
@@ -92,6 +97,8 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
     val target = O
 
     lazy val inverse = spookRight(shape)
+
+    override def toString():String = s"bustRight($shape)"
 
     def apply(x:(Nothing,A)):Nothing = x._1
 
@@ -106,6 +113,8 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     lazy val inverse = bustLeft(shape)
 
+    override def toString():String = s"spookLeft($shape)"
+
     def apply(x:Nothing):(A,Nothing) = absurd(target)(x)
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.spookLeft) ++ shape.serialize
@@ -119,6 +128,8 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     lazy val inverse = bustRight(shape)
 
+    override def toString():String = s"spookRight($shape)"
+
     def apply(x:Nothing):(Nothing,A) = absurd(target)(x)
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.spookRight) ++ shape.serialize
@@ -127,12 +138,12 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
   //epimorphisms
 
-
-  //TODO rename these to first and second
-  def left[A,B](l:Shape[A],r:Shape[B]) = new Morphism[(A,B),A] {
+  def first[A,B](l:Shape[A], r:Shape[B]) = new Morphism[(A,B),A] {
 
     val domain = l*r
     val target = l
+
+    override def toString():String = s"product.first($l,$r)"
 
     def apply(x:(A,B)):A = x._1
 
@@ -140,10 +151,12 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
   }
 
-  def right[A,B](l:Shape[A],r:Shape[B]) = new Morphism[(A,B),B] {
+  def second[A,B](l:Shape[A], r:Shape[B]) = new Morphism[(A,B),B] {
 
     val domain = l*r
     val target = r
+
+    override def toString():String = s"product.second($l,$r)"
 
     def apply(x:(A,B)):B = x._2
 
@@ -160,9 +173,11 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     lazy val monoInverse:Morphism[(A,B),Either[A,Unit]] =
       sum.commute(I,l) <<
-      sum.bimap(right(l,I),getLeft(l)) <<
+      sum.bimap(second(l,I),getLeft(l)) <<
       leftDistr(l,I,I) <<
       rmap(l,bool.equals(r,y))
+
+    override def toString():String = s"leftPairedWith($l,$r,$y)"
 
     def apply(x:A):(A,B) = (x,y)
 
@@ -178,9 +193,11 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     lazy val monoInverse:Morphism[(A,B),Either[B,Unit]] =
       sum.commute(I,r) <<
-      sum.bimap(left(I,r),getRight(r)) <<
+      sum.bimap(first(I,r),getRight(r)) <<
       rightDistr(I,I,r) <<
       lmap(bool.equals(l,x),r)
+
+    override def toString():String = s"rightPairedWith($l,$r,$x)"
 
     def apply(y:B):(A,B) = (x,y)
 
@@ -196,11 +213,13 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
     val target = shape*shape
 
     lazy val monoInverse:Morphism[(A,A),Either[A,Unit]] =
-      sum.commute(I,shape) << sum.bimap(right(shape,I),getLeft(shape)) <<
+      sum.commute(I,shape) << sum.bimap(second(shape,I),getLeft(shape)) <<
       leftDistr(shape,I,I) <<
       rmap(shape,bool.equal(shape)) <<
       assocRight(shape,shape,shape) <<
       lmap(copy(shape),shape)
+
+    override def toString():String = s"copy($shape)"
 
     def apply(x:A):(A,A) = (x,x)
 

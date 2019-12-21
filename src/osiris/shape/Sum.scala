@@ -14,6 +14,7 @@ class Sum[I,J] (val a:Shape[I],val b:Shape[J]) extends Shape[Either[I,J]] {
 
   override def equals(that:Any):Boolean = that match {
     case (that:Sum[I,J]) =>  that.a == this.a && that.b == this.b
+    case _ => false
   }
 
   def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Shape.sum) ++ a.serialize ++ b.serialize

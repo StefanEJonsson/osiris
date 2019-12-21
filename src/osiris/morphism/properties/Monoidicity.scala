@@ -39,6 +39,8 @@ trait Monoidicity[F[_,_],Identity] {
     def serialize:Iterable[Byte] =
       code ++ Iterable(utilities.Serialization.Morphism.getLeft) ++ shape.serialize
 
+    override def toString():String = s"${Monoidicity.this}.getLeft($shape)"
+
   }
 
   def getRight[A](shape:Shape[A]) = new Isomorphism[F[Identity,A],A] {
@@ -52,6 +54,8 @@ trait Monoidicity[F[_,_],Identity] {
 
     def serialize:Iterable[Byte] =
       code ++ Iterable(utilities.Serialization.Morphism.getRight) ++ shape.serialize
+
+    override def toString():String = s"${Monoidicity.this}.getRight($shape)"
 
   }
 
@@ -67,6 +71,8 @@ trait Monoidicity[F[_,_],Identity] {
     def serialize:Iterable[Byte] =
       code ++ Iterable(utilities.Serialization.Morphism.putLeft) ++ shape.serialize
 
+    override def toString():String = s"${Monoidicity.this}.putLeft($shape)"
+
   }
 
   def putRight[A](shape:Shape[A]):Isomorphism[A,F[Identity,A]] = new Isomorphism[A,F[Identity,A]] {
@@ -80,6 +86,8 @@ trait Monoidicity[F[_,_],Identity] {
 
     def serialize:Iterable[Byte] =
       code ++ Iterable(utilities.Serialization.Morphism.putRight) ++ shape.serialize
+
+    override def toString():String = s"${Monoidicity.this}.putRight($shape)"
 
   }
 
@@ -95,21 +103,26 @@ trait Monoidicity[F[_,_],Identity] {
     def serialize:Iterable[Byte] =
       code ++ Iterable(utilities.Serialization.Morphism.leftAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
 
+    override def toString():String = s"${Monoidicity.this}.assocLeft($a,$b,$c)"
+
   }
 
   def assocRight[A,B,C](a:Shape[A],b:Shape[B],c:Shape[C]):Isomorphism[F[F[A,B],C],F[A,F[B,C]]] =
     new Isomorphism[F[F[A,B],C],F[A,F[B,C]]] {
 
-    val domain = F(F(a,b),c)
-    val target = F(a,F(b,c))
+      val domain = F(F(a,b),c)
+      val target = F(a,F(b,c))
 
-    lazy val inverse = assocLeft(a,b,c)
+      lazy val inverse = assocLeft(a,b,c)
 
-    def apply(x:F[F[A,B],C]):F[A,F[B,C]] = ar(x)
+      def apply(x:F[F[A,B],C]):F[A,F[B,C]] = ar(x)
 
-    def serialize:Iterable[Byte] =
-      code ++ Iterable(utilities.Serialization.Morphism.rightAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
+      def serialize:Iterable[Byte] =
+        code ++ Iterable(utilities.Serialization.Morphism.rightAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
 
-  }
+      override def toString():String = s"${Monoidicity.this}.assocRight($a,$b,$c)"
+
+
+    }
 
 }

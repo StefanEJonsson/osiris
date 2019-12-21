@@ -125,12 +125,12 @@ object Morphism {
       case M.first => {
         val fst = Shape.deserialize(bytes)
         val snd = Shape.deserialize(bytes)
-        product.left(fst,snd)
+        product.first(fst,snd)
       }
       case M.second => {
         val fst = Shape.deserialize(bytes)
         val snd = Shape.deserialize(bytes)
-        product.right(fst,snd)
+        product.second(fst,snd)
       }
       case M.firstWith => {
         val fst = Shape.deserialize(bytes)
@@ -264,6 +264,8 @@ trait Monomorphism[A,B] extends Morphism[A,B] {
 class CompositeMonomorphism[A,B,C](f: Monomorphism[B, C], g: Monomorphism[A, B])
   extends CompositeMorphism(f,g) with Monomorphism[A,C] {
 
+  override def toString():String = s"($f << $g)"
+
   val monoInverse:Morphism[C,Either[A,Unit]] =
     sum.rmap(g.domain,sum.join(I))  <<
     sum.assocRight(g.domain,I,I)    <<
@@ -288,5 +290,6 @@ class CompositeIsomorphism[A,B,C](f:Isomorphism[B,C], g:Isomorphism[A,B])
 
   lazy val inverse:Isomorphism[C,A] = g.inverse o f.inverse
 
+  override def toString():String = s"($f << $g)"
 
 }

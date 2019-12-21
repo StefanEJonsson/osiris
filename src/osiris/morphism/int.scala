@@ -13,6 +13,8 @@ object int {
     val domain = dom
     val target = range(domain.start + dx, domain.end + dx)
 
+    override def toString():String = s"translate($dom,$dx)"
+
     def serialize: Iterable[Byte] =
       Iterable(utilities.Serialization.Morphism.translate) ++
         dom.serialize ++ utilities.Serialization.Primitives.serializeInt(dx)
@@ -27,6 +29,8 @@ object int {
 
     val domain = dom
     val target = range(-domain.end,-domain.start)
+
+    override def toString():String = s"inv($dom)"
 
     def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.inv) ++ dom.serialize
 

@@ -47,6 +47,8 @@ trait Bifunctor[F[_,_]] {
 
     def serialize:Iterable[Byte] = code ++ Iterable(utilities.Serialization.Morphism.lmap) ++ f.serialize ++ r.serialize
 
+    override def toString():String = s"${Bifunctor.this}.lmap($f,$r)"
+
   }
 
   def rmap[L,R1,R2](l:Shape[L],f:Isomorphism[R1,R2]):Isomorphism[F[L,R1],F[L,R2]] = new Isomorphism[F[L,R1],F[L,R2]] {
@@ -59,6 +61,8 @@ trait Bifunctor[F[_,_]] {
     def apply(x:F[L,R1]):F[L,R2] = rm[L,R1,R2](l,f)(x)
 
     def serialize:Iterable[Byte] = code ++ Iterable(utilities.Serialization.Morphism.rmap) ++ l.serialize ++ f.serialize
+
+    override def toString():String = s"${Bifunctor.this}.rmap($l,$f)"
 
   }
 
@@ -74,6 +78,8 @@ trait Bifunctor[F[_,_]] {
 
       def serialize:Iterable[Byte] =
         code ++ Iterable(utilities.Serialization.Morphism.bimap) ++ l.serialize ++ r.serialize
+
+      override def toString():String = s"${Bifunctor.this}.bimap($l,$r)"
 
     }
 
@@ -92,6 +98,8 @@ trait Bifunctor[F[_,_]] {
       def serialize:Iterable[Byte] =
         code ++ Iterable(utilities.Serialization.Morphism.lmap) ++ f.serialize ++ r.serialize
 
+      override def toString():String = s"${Bifunctor.this}.lmap($f,$r)"
+
     }
 
   def rmap[L,R1,R2](l:Shape[L],f:Monomorphism[R1,R2]):Monomorphism[F[L,R1],F[L,R2]] =
@@ -107,6 +115,8 @@ trait Bifunctor[F[_,_]] {
       def serialize:Iterable[Byte] =
         code ++ Iterable(utilities.Serialization.Morphism.rmap) ++ l.serialize ++ f.serialize
 
+      override def toString():String = s"${Bifunctor.this}.lmap($l,$f)"
+
     }
 
   def bimap[L1,L2,R1,R2](l:Monomorphism[L1,L2], r:Monomorphism[R1,R2]):Monomorphism[F[L1,R1],F[L2,R2]] =
@@ -121,6 +131,8 @@ trait Bifunctor[F[_,_]] {
 
       def serialize:Iterable[Byte] =
         code ++ Iterable(utilities.Serialization.Morphism.bimap) ++ l.serialize ++ r.serialize
+
+      override def toString():String = s"$this.lmap($l,$r)"
 
     }
 
