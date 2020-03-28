@@ -6,11 +6,27 @@ package osiris.container
 import osiris._
 import osiris.container.companion.PairCompanion
 
+/**
+  * A container consisting of two smaller containers concatenated together to form a pair of containers.
+  *
+  * The index type of this container is Either[L,R]. Its shape is the tagged union of the shapes of the left and right
+  * containers respectively.
+  *
+  * @tparam L the index type for the left container
+  * @tparam R the index type for the right container
+  * @tparam S the type of elements stored in the container.
+  */
 trait Pair[L,R,S] extends Container[Either[L,R],S] {
 
   val space:PairCompanion[L,R,S]
 
+  /**
+    * @return The first (left) component of this pair.
+    */
   def left:Container[L,S]
+  /**
+    * @return The second (right) component of this pair.
+    */
   def right:Container[R,S]
 
   override def toString():String = s"($left|$right)"

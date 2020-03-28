@@ -8,6 +8,13 @@ import morphism._
 import vector._
 import utilities.same
 
+/**
+  * In osiris, a matrix is a special type of vector (indexed by the cartesian product of two shapes). Every vector
+  * belongs to a vector space. A matrix belongs to a special type of vector space called a matrix space.
+  *
+  * @param outer the VectorSpace of the columns.
+  * @param inner the VectorSpace of the rows.
+  */
 class MatrixSpace[I,J,S](override val outer:VectorSpace[I,S], override val inner:VectorSpace[J,S])
   extends container.companion.TableCompanion[I,J,S](outer,inner) with VectorSpace[(I,J),S] {
 
@@ -29,8 +36,6 @@ class MatrixSpace[I,J,S](override val outer:VectorSpace[I,S], override val inner
     new UnCurry(currySpace((i:I) => inner((j:J) => f((i,j)))),inner)
 
   override def apply(f: ((I,J)) => pin.Pin[Unit,S]):pin.MatrixPin[I,J,S] = super.apply(f).asMatrix
-
-  private[space] def parseElems(bytes:Iterator[Byte]):Matrix[I,J,S] = rows(_ => inner.parseElems(bytes))
 
   /* -----------------------------------------------------------------------------------------------------------------*/
 

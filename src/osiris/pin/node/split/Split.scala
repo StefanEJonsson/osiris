@@ -15,6 +15,10 @@ import vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has one socket of vector type and N pins of singleton type. The output of each pin is equal to the corresponding
+  * element in the input vector.
+  */
 class Split[I,S](space:VectorSpace[I,S]) extends Node {
 
   private val pinSpace:ContainerCompanion[I,Pin[Unit,S]] = space.shape --> [Pin[Unit,S]]()

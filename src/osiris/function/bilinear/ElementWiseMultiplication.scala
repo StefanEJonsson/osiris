@@ -3,13 +3,23 @@
 
 package osiris.function.bilinear
 
+import osiris.utilities.serialization.v2
 import osiris.vector.space.VectorSpace
 import osiris.vector.{Matrix, Vector}
 
+/**
+  * z(i) = x(i)*y(i)
+  */
 case class ElementWiseMultiplication[I,S](target:VectorSpace[I,S]) extends BilinearFunction[I,I,I,S] {
 
   val left = target
   val right = target
+
+  override def toString():String = s"o[$target]"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.elementWiseMultiplication) ++
+    target.shape.serialize
 
   override def apply(x:Vector[Either[I,I],S]):Vector[I,S] = {
     val xp = x.asPair[I,I,Either[I,I]]
@@ -24,5 +34,11 @@ case class ElementWiseMultiplication[I,S](target:VectorSpace[I,S]) extends Bilin
   def leftFeedback = this
 
   def rightFeedback = this
+
+}
+
+object ElementWiseMultiplication {
+
+  def apply[I,S](target:VectorSpace[I,S]):ElementWiseMultiplication[I,S] = new ElementWiseMultiplication(target)
 
 }

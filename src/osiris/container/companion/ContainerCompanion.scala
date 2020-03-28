@@ -6,10 +6,25 @@ package osiris.container.companion
 import osiris._
 import osiris.shape.Shape
 
+/**
+  * Base class for factory objects for [[osiris.container.Container]].
+  *
+  * @tparam I the type of indices used to access elements in containers constructed from this object.
+  * @tparam S the type of elements stored in containers constructed from this object.
+  *
+  * @constructor Create new ContainerCompanion for containers with indices in shape.
+  * @param shape the set of indices used to access elements in containers constructed from this object.
+  *
+ */
 abstract class ContainerCompanion[I,S](val shape:Shape[I]) {
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 
+  /**
+    * Constructs a container with f(i) as its element at index i for every i in shape.
+    *
+    * @param f a function or lambda expression specifying the elements of the container at every given index.
+   */
   def apply(f:I=>S):container.Container[I,S]
 
   /* ---------------------------------------------------------------------------------------------------------------- */

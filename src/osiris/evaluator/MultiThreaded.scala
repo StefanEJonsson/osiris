@@ -5,7 +5,9 @@ package osiris.evaluator
 
 import osiris.pin.Pin
 
-
+/**
+  * Does the computation step of a TwoStepEvaluator using n threads.
+ */
 trait MultiThreaded extends Compute {
 
   val n:Int

@@ -4,9 +4,15 @@
 package osiris.container
 
 import osiris._
-import morphism.absurd
 import container.companion.EmptyCompanion
 
+/**
+  * A container containing no elements.
+  *
+  * The shape of this container is the empty set.
+  *
+  * @tparam S the type of elements (not) stored in the container.
+  */
 class Empty[S] extends Container[Nothing,S] {
 
   val space = new EmptyCompanion[S]

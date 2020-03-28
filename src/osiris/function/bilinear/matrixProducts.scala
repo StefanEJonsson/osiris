@@ -4,6 +4,10 @@
 package osiris.function.bilinear
 
 import osiris.morphism._
+import osiris.utilities
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 import osiris.vector._
 import osiris.vector.space.VectorSpace
 
@@ -13,7 +17,11 @@ case class VectorMatrixProduct[I,J,S](vectorSpace:VectorSpace[J,S],target:Vector
   val left = vectorSpace
   val right = vectorSpace * target
 
-  override def toString():String = s"VectorMatrixProduct $vectorSpace $target"
+  override def toString():String = s"-||[$vectorSpace $target]"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.vectorMatrixProduct) ++
+    vectorSpace.shape.serialize ++ target.shape.serialize
 
   override def apply(x:Vector[Either[J,(J,I)],S]):Vector[I,S] = {
     val p = x.asPair[J,(J,I),Either[J,(J,I)]]
@@ -43,7 +51,11 @@ case class MatrixVectorProduct[I,J,S](target:VectorSpace[I,S],vectorSpace: Vecto
   val left = target * vectorSpace
   val right = vectorSpace
 
-  override def toString():String = s"MatrixVectorProduct $target $vectorSpace"
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.matrixVectorProduct) ++
+    target.shape.serialize ++ vectorSpace.shape.serialize
+
+  override def toString():String = s"=|[$target $vectorSpace]"
 
   override def apply(x:Vector[Either[(I,J),J],S]):Vector[I,S] = {
     val p = x.asPair
@@ -76,7 +88,11 @@ case class MatrixMatrixProduct[I,K,J,S](outer:VectorSpace[I,S],
 
   val target = outer * inner
 
-  override def toString():String = s"MatrixMatrixProduct $outer $middle $inner"
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.matrixMatrixProduct) ++
+    outer.shape.serialize ++ middle.shape.serialize ++ inner.shape.serialize
+
+  override def toString():String = s"=||[$outer $middle $inner]"
 
   override def apply(x:Vector[Either[(I,K),(K,J)],S]):Vector[(I,J),S] = {
     val p = x.asPair[(I,K),(K,J),Either[(I,K),(K,J)]]

@@ -4,9 +4,13 @@
 package osiris.function.bilinear
 
 import osiris.morphism.product
+import osiris.utilities.serialization.v2
 import osiris.vector.space.VectorSpace
 import osiris.vector.{Matrix, Pair, Vector}
 
+/**
+  * The tensor product of two bilinear functions.
+  */
 class LayeredBilinear[OutI,OutLJ,OutRJ,
                               InI,InLJ,InRJ, S](outer:BilinearFunction[OutI,OutLJ,OutRJ,S],
                                                            inner:BilinearFunction[InI,InLJ,InRJ,S])
@@ -16,6 +20,12 @@ class LayeredBilinear[OutI,OutLJ,OutRJ,
   val right = outer.right * inner.right
 
   val target = outer.target * inner.target
+
+  override def toString():String = s"($outer & $inner)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.layeredBilinear) ++
+    outer.serialize ++ inner.serialize
 
   override def apply(x:Vector[Either[(OutLJ,InLJ),(OutRJ,InRJ)],S]):Vector[(OutI,InI),S] = {
     val xp = x.asPair[(OutLJ,InLJ),(OutRJ,InRJ),Either[(OutLJ,InLJ),(OutRJ,InRJ)]]

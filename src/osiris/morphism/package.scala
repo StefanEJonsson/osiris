@@ -4,9 +4,15 @@
 package osiris
 
 import osiris.shape.Shape
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 
 package object morphism {
 
+  /**
+    * The identity morphism. x => x
+    */
   def id[A](shape:Shape[A]) = new Isomorphism[A,A] {
 
     val domain = shape
@@ -18,10 +24,13 @@ package object morphism {
 
     def apply(x:A):A = x
 
-    def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Morphism.id) ++ shape.serialize
+    def serialize:Iterable[Byte] = Iterable(v2.Morphism.constants.id) ++ shape.serialize
 
   }
 
+  /**
+    * Takes any element of A and always returns ()
+    */
   def unit[A](shape:Shape[A]) = new Morphism[A,Unit] {
 
     val domain = shape
@@ -31,10 +40,13 @@ package object morphism {
 
     def apply(x:A):Unit = ()
 
-    def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Morphism.unit) ++ shape.serialize
+    def serialize:Iterable[Byte] = Iterable(v2.Morphism.constants.unit) ++ shape.serialize
 
   }
 
+  /**
+    * The empty function.
+    */
   def absurd[A](shape:Shape[A]) = new Monomorphism[Nothing,A] {
 
     val domain = O
@@ -46,11 +58,13 @@ package object morphism {
 
     def apply(x:Nothing):A = utilities.absurd(x)
 
-    def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Morphism.absurd) ++ shape.serialize
+    def serialize:Iterable[Byte] = Iterable(v2.Morphism.constants.absurd) ++ shape.serialize
 
   }
 
-
+  /**
+    * Takes () as input and always returns the constant a.
+    */
   def constant[A](shape:Shape[A],a:A) = new Monomorphism[Unit,A] {
 
     val domain = I
@@ -63,7 +77,7 @@ package object morphism {
     def apply(x:Unit):A = a
 
     def serialize:Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.constant) ++ shape.serialize ++ Shape.serializeIndex(a)
+      Iterable(v2.Morphism.constants.constant) ++ shape.serialize ++ utilities.serialization.v2.Index.serializeIndex(a)
 
   }
 

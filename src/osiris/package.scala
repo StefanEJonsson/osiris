@@ -9,8 +9,14 @@ package object osiris {
   val I = shape.Single
   val O = shape.Empty
 
+  /**
+    * The shape with indices {start, start+1, ..., end}
+    */
   def range(start:Int,end:Int):shape.Range = new shape.Range(start,end)
 
+  /**
+    * The shape with indices {0, 1, ..., n-1}
+    */
   def until(n:Int):shape.Range = range(0,n-1)
 
 

@@ -10,6 +10,10 @@ import osiris.shape.Shape
 
 import scala.collection.mutable
 
+/**
+  * Like a FunctionNode but with the restriction that the function must be bilinear. This make the feedback computation
+  * a bit more efficient.
+  */
 class BilinearNode[L,R,I,S](f:BilinearFunction[I,L,R,S])
   extends Node {
 

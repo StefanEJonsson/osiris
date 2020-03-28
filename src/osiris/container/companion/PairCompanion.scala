@@ -5,6 +5,13 @@ package osiris.container.companion
 
 import osiris.container.Pair
 
+/**
+  * Factory object to construct pairs of containers.
+  *
+  * @tparam L the type of indices to the left container
+  * @tparam R the type of indices to the right container
+  * @tparam S the type of elements stored in containers constructed from this object.
+  */
 class PairCompanion[L,R,S](val left:ContainerCompanion[L,S], val right:ContainerCompanion[R,S])
   extends ContainerCompanion[Either[L,R],S](left.shape + right.shape) {
 

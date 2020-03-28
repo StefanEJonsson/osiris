@@ -16,6 +16,9 @@ import vector.space.MatrixSpace
 
 import scala.collection.mutable
 
+/**
+  * Has N sockets of vector type and one pin of matrix type. The output is a matrix containing the inputs as rows.
+  */
 class RowMerge[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
 
   private val socketSpace:ContainerCompanion[I,In] = space.outer.shape --> [In]()

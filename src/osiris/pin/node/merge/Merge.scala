@@ -14,6 +14,10 @@ import vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has N sockets that take singleton pins. Has one pin of vector type. The output is identical to the input but with
+  * he singletons collected into a vector.
+  */
 class Merge[I,S](space:VectorSpace[I,S]) extends Node {
 
   private val socketSpace:ContainerCompanion[I,In] = space.shape --> [In]()

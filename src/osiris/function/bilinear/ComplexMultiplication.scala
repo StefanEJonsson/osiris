@@ -4,17 +4,33 @@
 package osiris.function.bilinear
 
 import osiris.morphism.{product, sum}
+import osiris.utilities.serialization.v2
 import osiris.vector.space.VectorSpace
 import osiris.vector.{Matrix, Pair, Vector}
-import osiris.{+, I, ScalarSpace}
+import osiris.{+, I, ScalarSpace, utilities}
 
+/**
+  * Multiplication of two complex numbers.
+  *
+  * Note that in this API, the set of complex numbers is not viewed as a ScalarSpace. Instead, complex numbers are
+  * represented as tuples of scalars. Complex multiplication is therefore seen as a VectorFunction that takes a tuple
+  * of tuples as an argument and generates a tuple.
+  *
+  * Note that when we compute the derivatives of functions involving complex numbers in this API, it is not the complex
+  * derivative. Rather, it is the total derivative of the corresponding VectorFunction. This is necessary if we want to
+  * obtain results that are meaningful in an optimization context.
+  */
 class ComplexMultiplication[S](space:ScalarSpace[S])
   extends BilinearFunction[Either[Unit,Unit],Either[Unit,Unit],Either[Unit,Unit],S] {
 
-  val left = (I + I) --> scalarSpace
-  val right = (I + I) --> scalarSpace
+  lazy val left = (I + I) --> space
+  lazy val right = (I + I) --> space
 
-  val target = (I + I) --> scalarSpace
+  lazy val target = (I + I) --> space
+
+  override def toString():String = "ComplexMul"
+
+  def serialize:Iterable[Byte] = Iterable(v2.Function.constants.complexMultiplication)
 
   override def apply(x:Vector[Either[Either[Unit,Unit],Either[Unit,Unit]],S]):Pair[Unit,Unit,S] = {
     val xp = x.asPair[+[Unit,Unit],+[Unit,Unit],+[+[Unit,Unit],+[Unit,Unit]]]
@@ -46,5 +62,11 @@ class ComplexMultiplication[S](space:ScalarSpace[S])
   def leftFeedback = this.permuteTarget(sum.commute(I,I)).permuteRight(sum.commute(I,I))
 
   def rightFeedback = this.permuteTarget(sum.commute(I,I)).permuteRight(sum.commute(I,I))
+
+}
+
+object ComplexMultiplication {
+
+  def apply[S](space:ScalarSpace[S]):ComplexMultiplication[S] = new ComplexMultiplication[S](space)
 
 }

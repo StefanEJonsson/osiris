@@ -8,6 +8,10 @@ import osiris.pin.node.Node
 import pin._
 import vector._
 
+/**
+  * An Evaluator is responsible for evaluating a computation graph. This serves as a base trait for different
+  * evaluators.
+  */
 trait Evaluator {
 
   def eval(values: Iterable[Pin[_, _]], gradients: Iterable[Pin[_, _]]): Environment
@@ -19,38 +23,6 @@ trait Evaluator {
   def gradients(pins:Pin[_,_]*):Environment = eval(Set(),pins)
 
   def gradient[I,S](pin:Pin[I,S]):Vector[I,S] = gradients(pin).feedback(pin)
-
-}
-
-trait TwoStepEvaluator extends Evaluator {
-
-  type Computation = Either[Node,Socket[_,_]]
-  type Analysis = (collection.mutable.ListBuffer[Computation],collection.mutable.Map[Either[Pin[_,_],Pin[_,_]],Int])
-
-  def eval(values: Iterable[Pin[_, _]], gradients: Iterable[Pin[_, _]]): Environment = {
-    compute(analysis(values,gradients))
-  }
-
-  def valueDependencies(computation: Computation):Set[Either[Pin[_,_],Pin[_,_]]] = {
-    computation match {
-      case Left(node) => node.sockets.map(s => Left(s.pin.get))
-      case Right(socket) => socket.feedbackDependencies
-    }
-  }
-
-  def computationDependencies(computation: Computation):Set[Computation] = {
-    computation match {
-      case Left(node) => node.sockets.map(s => Left(s.pin.get.node))
-      case Right(socket) => socket.feedbackDependencies.map {d => d match {
-        case Left(pin) => Set(Left(pin.node))
-        case Right(pin) => pin.sockets.map(Right(_))
-      }}.flatten
-    }
-  }
-
-  def analysis(values:Iterable[Pin[_,_]],gradients:Iterable[Pin[_,_]]):Analysis
-
-  def compute(analysis: Analysis,environment: Environment = new Environment()):Environment
 
 }
 

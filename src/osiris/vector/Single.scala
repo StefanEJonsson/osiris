@@ -24,4 +24,7 @@ class Single[S](value:S) extends container.Single[S](value) with Vector[Unit,S] 
 
   def ^(k:Double):Single[S] = new Single(space.scalarSpace.^(this.value,space.scalarSpace.fromDouble(k))) //TODO make sure that corresponding function exists in scalarspace specification
 
+  def serialize: Iterable[Byte] =
+    Iterable(utilities.serialization.v2.Vector.elems) ++ space.scalarSpace.serialize(value)
+
 }

@@ -11,6 +11,21 @@ import osiris.vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Works like the identity function during forward propagation but during backpropagation it multiplies the feedback
+  * by a discount factor between zero and one.
+  *
+  * This is useful when preventing gradients from exploding to infinity in large Recurrent Neural Networks or when
+  * studying the effects of short sightedness.
+  *
+  * Intuitively, every Tick is supposed to represent a point in time. Every node that occurs before the tick in the
+  * computation graph represents decisions that are made before that point in time. Every objective that occurs after
+  * the tick in the computation graph represents a consequence that occurs after that point in time. The discount factor
+  * represents the fact that we have a tendency to care less about the consequences of a decision if there is a time
+  * delay between the decision and the consequence. If one tick is introduced for every unit of time, then the feedback
+  * gets multiplied by the discount factor once for every unit of time that separates the action from the consequence,
+  * making the feedback go to zero as the delay goes to infinity.
+  */
 class Tick[I,S](space:VectorSpace[I,S],discountFactor:S) extends Node {
 
   val sockets = Set(in)

@@ -14,6 +14,9 @@ import osiris.vector.space.{MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
+/**
+  * A pin that represents a constant value.
+  */
 class Constant[I,S] (value:Vector[I,S]) extends Pin[I,S] {
 
   val space = value.space

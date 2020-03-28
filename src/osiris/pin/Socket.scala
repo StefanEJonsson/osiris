@@ -10,6 +10,9 @@ import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import vector.space.VectorSpace
 
+/**
+  * Sockets are used to represent inputs for computations (Nodes) in the computation graph.
+  */
 trait Socket[I,S] {
 
   val space:VectorSpace[I,S]

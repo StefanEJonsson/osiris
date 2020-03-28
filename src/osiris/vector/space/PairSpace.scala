@@ -8,6 +8,12 @@ import morphism.Morphism
 import utilities.same
 import vector.{Empty, Pair}
 
+/**
+  * The vector space used to construct [osiris.vector.Pair]s.
+  *
+  * @param left the vector space of the left component of the pairs.
+  * @param right the vector space of the right component of the pairs.
+  */
 class PairSpace[L,R,S] (override val left:VectorSpace[L,S],override val right:VectorSpace[R,S])
   extends container.companion.PairCompanion[L,R,S](left,right) with VectorSpace[Either[L,R],S] {
 
@@ -24,12 +30,6 @@ class PairSpace[L,R,S] (override val left:VectorSpace[L,S],override val right:Ve
   override def apply(f:Either[L,R]=>S):Pair[L,R,S] = Pair(left( l => f(Left(l))),right( r => f(Right(r))))
 
   override def apply(f:Either[L,R] => pin.Pin[Unit,S]):pin.PairPin[L,R,S] = super.apply(f).asPair
-
-  private[space] def parseElems(bytes: Iterator[Byte]): Pair[L,R,S] = {
-    val l = left.parseElems(bytes)
-    val r = right.parseElems(bytes)
-    Pair[L,R,S](l,r)
-  }
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 

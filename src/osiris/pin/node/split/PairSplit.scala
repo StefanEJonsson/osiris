@@ -13,6 +13,10 @@ import vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has one socket of Pair type and two pins. The output of the first pin is the first component of the pair. The output
+  * of the second pin is the second component of the pair.
+  */
 class PairSplit[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends Node {
 
   val pins = Set(left,right)

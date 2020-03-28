@@ -5,9 +5,18 @@ package osiris.function.map
 
 import osiris.function.VectorFunction
 import osiris.morphism.product
+import osiris.utilities.serialization.v2
 import osiris.vector.{Pair, Vector}
 import osiris.vector.space.VectorSpace
 
+/**
+  * Takes a pair of matrices and produces a new matrix by applying the binary operation f on matching columns of the
+  * matrices.
+  *
+  * z(j) = f(x(j),y(j))
+  *
+  * where z(j) denotes the jth column of the matrix z.
+  */
 class ColWise[I,IL,IR,J,S](inner:VectorSpace[J,S],f:VectorFunction[I,Either[IL,IR],S])
   extends VectorFunction[(I,J),Either[(IL,J),(IR,J)],S] {
 
@@ -18,6 +27,12 @@ class ColWise[I,IL,IR,J,S](inner:VectorSpace[J,S],f:VectorFunction[I,Either[IL,I
   val left =  l * inner
   val right = r * inner
   val domain = left + right
+
+  override def toString():String = s"ColWise[$inner]($f)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.colWise) ++
+    inner.shape.serialize ++ f.serialize
 
   def apply(x:Vector[Either[(IL,J),(IR,J)],S]):Vector[(I,J),S] = {
     val xp = x.asPair[(IL,J),(IR,J),Either[(IL,J),(IR,J)]]

@@ -5,9 +5,18 @@ package osiris.function.map
 
 import osiris.function.VectorFunction
 import osiris.morphism.product
+import osiris.utilities.serialization.v2
 import osiris.vector.{Pair, Vector}
 import osiris.vector.space.VectorSpace
 
+/**
+  * Takes a pair of matrices and produces a new matrix by applying the binary operation f on matching rows of the
+  * matrices.
+  *
+  * z(i) = f(x(i),y(i))
+  *
+  * where z(i) denotes the ith row of the matrix z.
+  */
 class RowWise[I,J,JL,JR,S](outer:VectorSpace[I,S],f:VectorFunction[J,Either[JL,JR],S])
   extends VectorFunction[(I,J),Either[(I,JL),(I,JR)],S] {
 
@@ -18,6 +27,12 @@ class RowWise[I,J,JL,JR,S](outer:VectorSpace[I,S],f:VectorFunction[J,Either[JL,J
   val left = outer * l
   val right = outer * r
   val domain = left + right
+
+  override def toString():String = s"RowWise[$outer]($f)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.rowWise) ++
+    outer.shape.serialize ++ f.serialize
 
   def apply(x:Vector[Either[(I,JL),(I,JR)],S]):Vector[(I,J),S] = {
     val xp = x.asPair[(I,JL),(I,JR),Either[(I,JL),(I,JR)]]

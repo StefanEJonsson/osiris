@@ -3,6 +3,9 @@
 
 package osiris.evaluator
 
+/**
+  * Does the computation step of a TwoStepEvaluator using a single thread.
+  */
 trait SingleThreaded extends Compute {
 
   def compute(analysis:Analysis,environment: Environment = new Environment()):Environment = {

@@ -16,6 +16,10 @@ import osiris.vector.space.{EmptySpace, MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
+/**
+  * A pin that represents a parameter of a machine learning model. It starts with an initial value. It is then adjusted
+  * using some version of the gradient descent algorithm.
+  */
 class Parameter[I,S](val name:String, init:Vector[I,S])
   extends Pin[I,S] {
 

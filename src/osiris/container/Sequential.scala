@@ -5,6 +5,13 @@ package osiris.container
 
 import osiris.container.companion.SequentialCompanion
 
+/**
+  * A container indexed by integers.
+  *
+  * This is basically what you would call an ordinary "List" or "Vector" with fixed size.
+  *
+  * @tparam S the type of elements stored in the List.
+  */
 trait Sequential[S] extends Container[Int,S] {
 
   override val space:SequentialCompanion[S]

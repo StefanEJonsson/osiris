@@ -13,7 +13,14 @@ import osiris.pin.node.merge.{Merge, PairMerge}
 import osiris.pin.node.split.Split
 import osiris.vector.space._
 
-
+/**
+  * Represents a value in a computation graph.
+  *
+  * A pin can be a Constant, Variable, Parameter or an output from a function.
+  *
+  * Computation graphs are built by connecting pins to [Socket]s. Sockets recieve data from pins during forward
+  * propagation and produce feedback for pins during backpropagation.
+  */
 trait Pin[I,S] {
 
   val space:VectorSpace[I,S]
@@ -108,9 +115,7 @@ trait Pin[I,S] {
   /* ---------------------------------------------------------------------------------------------------------------- */
 
   def permute[I0](converter: Isomorphism[I0,I]): Pin[I0,S] =
-    new linear.reindex.Permute(converter.domain --> space.scalarSpace,this.space,converter)(this)
-
-  //TODO add some other reindexing operations
+    new linear.reindex.Permute(space.scalarSpace,converter)(this)
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 

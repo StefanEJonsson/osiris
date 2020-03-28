@@ -10,6 +10,10 @@ import osiris.shape.Shape
 
 import scala.collection.mutable
 
+/**
+  * Like a [FunctionNode] but with the restriction that the function must be linear. This makes the feedback computation
+  * a bit more efficient.
+  */
 class LinearNode[I,J,S](f:LinearFunction[I,J,S]) extends Node {
 
   val sockets = Set(in)

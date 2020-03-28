@@ -6,6 +6,9 @@ package osiris.vector
 import osiris._
 import osiris.shape.Shape
 import morphism._
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 import osiris.vector.space.VectorSpace
 
 class ReIndexed[I,J,S](v:Vector[J,S],converter:Morphism[I,J])
@@ -13,8 +16,9 @@ class ReIndexed[I,J,S](v:Vector[J,S],converter:Morphism[I,J])
 
   override val space = converter.domain --> v.space.scalarSpace
 
+  //TODO this is not very efficient when v is larger than this
   override def serialize: Iterable[Byte] =
-    Iterable(utilities.Serialization.version,utilities.Serialization.Representation.reindex) ++
+    Iterable(Serialization.version,v2.Vector.reindex) ++
       v.space.shape.serialize ++
       converter.serialize ++
       v.serialize

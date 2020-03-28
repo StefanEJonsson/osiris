@@ -7,6 +7,10 @@ import osiris.evaluator.Environment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.shape.Shape
 
+/**
+  * A node represents a computation in a computation graph. The node has a set of sockets and a set of pins. The sockets
+  * represent inputs to the computation and pins represent outputs.
+  */
 trait Node {
 
   val sockets:Set[Socket[_,_]]

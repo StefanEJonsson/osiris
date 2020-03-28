@@ -8,6 +8,10 @@ import shape._
 import vector.{Sequential, SimpleSequential}
 import morphism._
 
+/**
+  * VectorSpace used to construct [osiris.vector.Sequential] vectors (integer indexed vectors). These are the vectors
+  * we usually talk about when we talk about vectors.
+  */
 class SequentialSpace[S] (val scalarSpace:ScalarSpace[S], range:Range)
   extends container.companion.SequentialCompanion[S](range) with VectorSpace[Int,S] {
 
@@ -22,9 +26,6 @@ class SequentialSpace[S] (val scalarSpace:ScalarSpace[S], range:Range)
   override def apply(f:Int => S):Sequential[S] = new SimpleSequential(this,shape.map(f).toVector)
 
   override def apply(f:Int => pin.Pin[Unit,S]):pin.SequentialPin[S] = super.apply(f).asSequential
-
-  private[space] def parseElems(bytes:Iterator[Byte]):Sequential[S] =
-    new SimpleSequential(this,range.map(_ => scalarSpace.deserialize(bytes)).toVector)
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 

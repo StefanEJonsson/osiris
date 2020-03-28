@@ -7,6 +7,9 @@ import osiris._
 import osiris.morphism._
 import osiris.vector.Empty
 
+/**
+  * The VectorSpace used to construct the empty vector (vector with no indices).
+  */
 class EmptySpace[S](val scalarSpace: ScalarSpace[S])
   extends container.companion.EmptyCompanion[S] with VectorSpace[Nothing,S] {
   /* ---------------------------------------------------------------------------------------------------------------- */
@@ -18,8 +21,6 @@ class EmptySpace[S](val scalarSpace: ScalarSpace[S])
   override def apply(f:Nothing => pin.Pin[Unit,S]):pin.EmptyPin[S] = super.apply(f).asEmpty
 
   override def apply():Empty[S] = new Empty(scalarSpace)
-
-  private[space] def parseElems(bytes:Iterator[Byte]):Empty[S] = this()
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 

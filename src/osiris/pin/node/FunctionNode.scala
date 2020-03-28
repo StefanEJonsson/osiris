@@ -8,6 +8,9 @@ import osiris.evaluator.Environment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.shape.Shape
 
+/**
+  * A [Node] where the computation is given by a [VectorFunction].
+  */
 class FunctionNode[I,J,S](f:VectorFunction[I,J,S]) extends Node {
 
   val sockets = Set(in)

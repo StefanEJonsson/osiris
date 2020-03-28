@@ -4,9 +4,21 @@
 package osiris.function.bilinear
 
 import osiris.morphism.product
+import osiris.utilities.serialization.v2
 import osiris.vector.{Matrix, Pair, Vector}
 import osiris.vector.space.VectorSpace
 
+/** Takes a BilinearFunction and constructs a new BilinearFunction on matrices that is computed by applying the
+  * original BilinearFunction on each row of the input matrices.
+  *
+  * @param outer The vector space that cols of the matrices (both input matrices and the output) belong to.
+  * @param f The original BilinearFunction
+  * @tparam I The index type used to access columns of the matrices involved (both input and output)
+  * @tparam J The index type of the vectors returned by f.
+  * @tparam L The index type of the first argument to f.
+  * @tparam R The index type of the second argument to f.
+  * @tparam S The scalar field
+  */
 class RowWiseBilinear[I,J,L,R,S](outer:VectorSpace[I,S], f:BilinearFunction[J,L,R,S])
   extends BilinearFunction[(I,J),(I,L),(I,R),S] {
 
@@ -14,6 +26,12 @@ class RowWiseBilinear[I,J,L,R,S](outer:VectorSpace[I,S], f:BilinearFunction[J,L,
   val right = outer * f.right
 
   val target = outer * f.target
+
+  override def toString():String = s"RowWise[$outer]($f)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.rowWiseBilinear) ++
+    outer.shape.serialize ++ f.serialize
 
   override def apply(x:Vector[Either[(I,L),(I,R)],S]):Matrix[I,J,S] = {
     val xp = x.asPair

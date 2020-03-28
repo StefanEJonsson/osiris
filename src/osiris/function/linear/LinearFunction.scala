@@ -9,6 +9,10 @@ import osiris.function.VectorFunction
 import osiris.pin.node.LinearNode
 import osiris.vector.Vector
 
+/**
+  * Base class for VectorFunctions that are linear ( f(a*x + b*y) = a*f(x) + b*f(y) ). These functions have simpler
+  * feedback functions which results in faster backpropagation.
+  */
 trait LinearFunction[I,J,S] extends VectorFunction[I,J,S] {
 
   override def apply(x:pin.Pin[J,S]):pin.Pin[I,S] = {

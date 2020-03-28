@@ -3,7 +3,11 @@
 
 package osiris
 
+
+import osiris.utilities.serialization.v2.Primitives
 import osiris.vector.space.SequentialSpace
+
+import scala.reflect.ClassTag
 
 trait ScalarSpace[S] {
 
@@ -12,14 +16,18 @@ trait ScalarSpace[S] {
   val zero:S
   val one:S
 
+  val tag:ClassTag[S]
+
   def ^(n:Int):SequentialSpace[S] = until(n) --> this
 
   def serialize(s:S):Iterable[Byte]
 
-  def deserialize(bytes:Iterator[Byte]):S
-
   def fromInt(i:Int):S
   def fromDouble(d:Double):S
+
+  def toDouble(s:S):Double
+
+  def isDefined(s:S):Boolean
 
   def +(a:S,b:S):S
   def -(a:S,b:S):S
@@ -56,6 +64,11 @@ object ScalarSpace {
     case _ => throw new Exception("unknown scalarSpace")
   }
 
+  def apply[S]():ScalarSpace[S] =
+    if (0f.isInstanceOf[S]) {F32.asInstanceOf[ScalarSpace[S]]}
+    else if (0.0.isInstanceOf[S]) {F64.asInstanceOf[ScalarSpace[S]]}
+    else {throw new Exception("No such scalarspace exists")}
+
 }
 
 object F64 extends ScalarSpace[Double] {
@@ -63,12 +76,16 @@ object F64 extends ScalarSpace[Double] {
   val zero:Double = 0.0
   val one:Double = 1.0
 
+  val tag = scala.reflect.classTag[Double]
+
   def fromDouble(d:Double):Double = d
   def fromInt(i:Int):Double = i
+  def toDouble(d:Double):Double = d
 
   override def toString():String = "F64"
-  def serialize(s:Double):Iterable[Byte] = utilities.Serialization.Primitives.serializeDouble(s)
-  def deserialize(bytes:Iterator[Byte]):Double = utilities.Serialization.Primitives.deserializeDouble(bytes)
+  def serialize(s:Double):Iterable[Byte] = Primitives.serializeDouble(s)
+
+  def isDefined(s: Double): Boolean = !(s.isInfinite || s.isNaN)
 
   def +(a:Double,b:Double):Double = a + b
   def -(a:Double,b:Double):Double = a - b
@@ -102,12 +119,16 @@ object F32 extends ScalarSpace[Float] {
   val zero:Float = 0.0f
   val one:Float = 1.0f
 
+  val tag = scala.reflect.classTag[Float]
+
   def fromDouble(d:Double):Float = d.toFloat
   def fromInt(i:Int):Float = i
+  def toDouble(f:Float):Double = f
 
-  override def toString():String = "F64"
-  def serialize(s:Float):Iterable[Byte] = utilities.Serialization.Primitives.serializeFloat(s)
-  def deserialize(bytes:Iterator[Byte]):Float = utilities.Serialization.Primitives.deserializeFloat(bytes)
+  override def toString():String = "F32"
+  def serialize(s:Float):Iterable[Byte] = Primitives.serializeFloat(s)
+
+  def isDefined(s: Float): Boolean = !(s.isInfinite || s.isNaN)
 
   def +(a:Float,b:Float):Float = a + b
   def -(a:Float,b:Float):Float = a - b

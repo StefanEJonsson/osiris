@@ -13,6 +13,9 @@ import osiris.vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has two sockets and one pin. The output is the two inputs concatenated together to form a Pair.
+  */
 class PairMerge[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends Node {
 
   val pins = Set(out)

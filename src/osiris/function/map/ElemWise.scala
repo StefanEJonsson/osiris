@@ -6,15 +6,26 @@ package osiris.function.map
 import osiris._
 import osiris.function.VectorFunction
 import osiris.morphism.{product, sum}
+import osiris.utilities.serialization.v2
 import osiris.vector.Vector
 import osiris.vector.space.VectorSpace
 
+/**
+  * Takes a pair of vectors and produces a new vector by applying the binary operation f on matching elements of the
+  * vectors.
+  *
+  * z(i) = f(x(i),y(i))
+  */
 class ElemWise[I,S](val target:VectorSpace[I,S],op:VectorFunction[Unit,Either[Unit,Unit],S])
   extends VectorFunction[I,Either[I,I],S] {
 
   val domain = target + target
 
-  override def toString():String = s"ElemWise $target $op"
+  override def toString():String = s"ElemWise[$target]($op)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.elemWise) ++
+    target.shape.serialize ++ op.serialize
 
   private def pair(x: S, y: S): Vector[Either[Unit, Unit], S] = ((I + I) --> scalarSpace) {
     case Left(()) => x

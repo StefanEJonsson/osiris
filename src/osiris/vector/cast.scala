@@ -20,6 +20,8 @@ class AsSequential[S](original:Vector[Int,S]) extends Sequential[S] {
 
   override def replace(i: Int, value: S): Sequential[S] = original.replace(i,value).asSequential
 
+  def serialize: Iterable[Byte] = original.serialize
+
 }
 
 class AsPair[L,R,J,S](original:Vector[Either[L,R],S])
@@ -36,6 +38,8 @@ class AsPair[L,R,J,S](original:Vector[Either[L,R],S])
 
   override def replace(i: Either[L, R], value: S): Pair[L,R,S] = original.replace(i,value).asPair
 
+  def serialize: Iterable[Byte] = original.serialize
+
 }
 
 class AsMatrix[R,C,S](original:Vector[(R,C),S]) extends Matrix[R,C,S] {
@@ -48,5 +52,7 @@ class AsMatrix[R,C,S](original:Vector[(R,C),S]) extends Matrix[R,C,S] {
   override def reIndex[I0](converter: Morphism[I0, (R, C)]): Vector[I0, S] = original.reIndex(converter)
 
   override def replace(i: (R,C),value:S):Matrix[R,C,S] = original.replace(i,value).asMatrix
-  
+
+  def serialize: Iterable[Byte] = original.serialize
+
 }

@@ -5,10 +5,14 @@ package osiris.morphism
 
 import osiris._
 import osiris.shape.Shape
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 
+/**
+  * Important morphisms associated with Either[Unit,Unit], here used as an alternative implementation of Boolean.
+  */
 object bool {
-
-  //TODO feels like more predicates should be needed?
 
   type BOOL = Either[Unit, Unit]
 
@@ -29,7 +33,7 @@ object bool {
 
     override def toString():String = s"equal($shape)"
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.equal) ++ shape.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.equal) ++ shape.serialize
 
     def apply(x: (A, A)): BOOL = x._1 == x._2
 
@@ -44,7 +48,7 @@ object bool {
 
     override def toString():String = s"and"
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.and)
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.and)
 
     def apply(x:(BOOL,BOOL)):BOOL = x._1 && x._2
 
@@ -57,7 +61,7 @@ object bool {
 
     override def toString():String = s"or"
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.or)
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.or)
 
     def apply(x:(BOOL,BOOL)):BOOL = x._1 || x._2
 
@@ -70,7 +74,7 @@ object bool {
 
     override def toString():String = s"xor"
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.xor)
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.xor)
 
     def apply(x:(BOOL,BOOL)):BOOL = x._1 != x._2
 

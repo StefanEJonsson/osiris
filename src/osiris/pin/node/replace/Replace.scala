@@ -13,6 +13,10 @@ import osiris.vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has two sockets (one vector and one singleton) and one pin (vector). The output is the same as the input vector but
+  * with one element replaced by the singleton.
+  */
 class Replace[I,S](space:VectorSpace[I,S],i:I) extends Node {
 
   val sockets = Set(in,replacement)

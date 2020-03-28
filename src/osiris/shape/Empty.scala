@@ -3,14 +3,18 @@
 
 package osiris.shape
 
-import osiris.{ScalarSpace, container, utilities}
+import osiris.utilities.serialization.v2
+import osiris.{ScalarSpace, container}
 import osiris.vector.space.EmptySpace
 
+/**
+  * The shape with no elements (the empty set).
+  */
 object Empty extends Shape[Nothing] {
 
   override def size = 0
 
-  def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Shape.empty)
+  def serialize:Iterable[Byte] = Iterable(v2.Shape.empty)
 
   def deserializeIndex(bytes: Iterator[Byte]): Nothing = throw new Exception("No such thing exists.")
 

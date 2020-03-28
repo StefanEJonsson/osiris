@@ -7,6 +7,13 @@ import osiris._
 import morphism._
 import container.companion._
 
+/**
+  * A table of elements with a fixed number of rows and columns.
+  *
+  * @tparam I the type of indices used to access rows of the table.
+  * @tparam J the type of indices used to access columns of the table.
+  * @tparam S the type of elements stored in the table.
+  */
 trait Table[I,J,S] extends Container[(I,J),S] {
 
   /* ---------------------------------------------------------------------------------------------------------------- */
@@ -83,6 +90,15 @@ trait Table[I,J,S] extends Container[(I,J),S] {
 
 }
 
+/**
+  * A Table constructed from a container of containers. Each of the inner containers becomes a row of the table.
+  *
+  * @param original the container containing the rows of the table to be constructed
+  * @param inner the space that the rows of the table belong to.
+  * @tparam I the type of indices used to access rows of the table.
+  * @tparam J the type of indices used to access columns of the table.
+  * @tparam S the type of elements stored in the table.
+  */
 class UnCurry[I,J,S](original:Container[I,Container[J,S]],val inner:ContainerCompanion[J,S])
   extends Table[I,J,S] {
 

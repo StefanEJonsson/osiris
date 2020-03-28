@@ -6,6 +6,13 @@ package osiris.container.companion
 import osiris.container.Table
 import osiris.container._
 
+/**
+  * Factory object to construct table containers.
+  *
+  * @tparam I the type of indices for rows in the resulting containers.
+  * @tparam J the type of indices for columns in the resulting containers.
+  * @tparam S the type of elements stored in containers constructed from this object.
+  */
 class TableCompanion[I,J,S](val outer:ContainerCompanion[I,S], val inner:ContainerCompanion[J,S])
   extends ContainerCompanion[(I,J),S](outer.shape*inner.shape) {
 

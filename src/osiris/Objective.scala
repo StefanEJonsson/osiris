@@ -12,6 +12,14 @@ import osiris.vector.space.SingleSpace
 
 import scala.collection.mutable
 
+/**
+  * Defines an objective (goal) for a machine learning model. When a pin is connected to this socket, that pin becomes
+  * an objective and is optimized during training.
+  *
+  * Positive strengths correspond to maximization and negative strengths correspond to minimization. When multiple
+  * objectives are used in the same model, a linear combination of the objectives is optimized. The coefficients in the
+  * linear combination are given by the strengths.
+  */
 class Objective[S](strength:S) extends Socket[Unit,S] {
 
   val space:SingleSpace[S] = I --> ScalarSpace(strength)

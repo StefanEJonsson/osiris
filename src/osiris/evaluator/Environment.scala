@@ -6,6 +6,14 @@ package osiris.evaluator
 import osiris.pin._
 import osiris.vector.{Empty, Matrix, Pair, Sequential, Single, Vector}
 
+/**
+  * Contains a mapping between pins and values (and also a mapping between pins and gradients).
+  *
+  * It is used by Evaluators to keep track of intermediate results when evaluating a computation graph. Because every
+  * evaluator creates its own environment, it is possible for multiple evaluators to work simultaneously on the same
+  * graph.
+  *
+  */
 class Environment {
 
   private val values = collection.mutable.Map[Pin[_,_],Vector[_,_]]()

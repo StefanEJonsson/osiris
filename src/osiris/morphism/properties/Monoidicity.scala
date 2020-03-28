@@ -6,7 +6,22 @@ package osiris.morphism.properties
 import osiris._
 import osiris.shape.Shape
 import morphism.Isomorphism
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 
+/**
+  * Contains isomorphisms associated with monoidal bifunctors. Monoidal bifunctors are generic types with two type
+  * parameters that have a weak identity I and satisfy the weak associative law.
+  *
+  * Weak Identity:
+  * F[I,A] is isomorphic to A (the isomorphism is called getRight and its inverse is called putRight)
+  * F[A,I] is isomorphic to A (the isomorphism is called getLeft and its inverse is called putLeft)
+  *
+  * Associativity:
+  * F[F[A,B],C] is isomorphic to F[A,F[B,C] ] (the isomorphism is called assocRight and its inverse is called assocLeft)
+  *
+  */
 trait Monoidicity[F[_,_],Identity] {
 
   protected def F[A,B](a:Shape[A], b:Shape[B]):Shape[F[A,B]]
@@ -37,7 +52,7 @@ trait Monoidicity[F[_,_],Identity] {
     def apply(x:F[A,Identity]):A = gl(x)
 
     def serialize:Iterable[Byte] =
-      code ++ Iterable(utilities.Serialization.Morphism.getLeft) ++ shape.serialize
+      code ++ Iterable(v2.Morphism.constants.getLeft) ++ shape.serialize
 
     override def toString():String = s"${Monoidicity.this}.getLeft($shape)"
 
@@ -53,7 +68,7 @@ trait Monoidicity[F[_,_],Identity] {
     def apply(x:F[Identity,A]):A = gr(x)
 
     def serialize:Iterable[Byte] =
-      code ++ Iterable(utilities.Serialization.Morphism.getRight) ++ shape.serialize
+      code ++ Iterable(v2.Morphism.constants.getRight) ++ shape.serialize
 
     override def toString():String = s"${Monoidicity.this}.getRight($shape)"
 
@@ -69,7 +84,7 @@ trait Monoidicity[F[_,_],Identity] {
     def apply(x:A):F[A,Identity] = pl(x)
 
     def serialize:Iterable[Byte] =
-      code ++ Iterable(utilities.Serialization.Morphism.putLeft) ++ shape.serialize
+      code ++ Iterable(v2.Morphism.constants.putLeft) ++ shape.serialize
 
     override def toString():String = s"${Monoidicity.this}.putLeft($shape)"
 
@@ -85,7 +100,7 @@ trait Monoidicity[F[_,_],Identity] {
     def apply(x:A):F[Identity,A] = pr(x)
 
     def serialize:Iterable[Byte] =
-      code ++ Iterable(utilities.Serialization.Morphism.putRight) ++ shape.serialize
+      code ++ Iterable(v2.Morphism.constants.putRight) ++ shape.serialize
 
     override def toString():String = s"${Monoidicity.this}.putRight($shape)"
 
@@ -101,7 +116,7 @@ trait Monoidicity[F[_,_],Identity] {
     def apply(x:F[A,F[B,C]]):F[F[A,B],C] = al(x)
 
     def serialize:Iterable[Byte] =
-      code ++ Iterable(utilities.Serialization.Morphism.leftAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
+      code ++ Iterable(v2.Morphism.constants.leftAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
 
     override def toString():String = s"${Monoidicity.this}.assocLeft($a,$b,$c)"
 
@@ -118,7 +133,7 @@ trait Monoidicity[F[_,_],Identity] {
       def apply(x:F[F[A,B],C]):F[A,F[B,C]] = ar(x)
 
       def serialize:Iterable[Byte] =
-        code ++ Iterable(utilities.Serialization.Morphism.rightAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
+        code ++ Iterable(v2.Morphism.constants.rightAssoc) ++ a.serialize ++ b.serialize ++ c.serialize
 
       override def toString():String = s"${Monoidicity.this}.assocRight($a,$b,$c)"
 

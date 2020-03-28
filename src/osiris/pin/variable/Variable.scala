@@ -14,6 +14,10 @@ import osiris.vector.space.{MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
+/**
+  * A pin that represents a mutable value. It starts with an initial value. It can then be changed by the user. It does
+  * not adjust itself automatically during optimization like a [Parameter] does.
+  */
 class Variable[I,S](val init:Vector[I,S]) extends Pin[I,S] {
 
   val space = init.space

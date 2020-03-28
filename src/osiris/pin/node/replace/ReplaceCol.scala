@@ -11,6 +11,10 @@ import osiris.vector.space.MatrixSpace
 
 import scala.collection.mutable
 
+/**
+  * Has two sockets (one of matrix type and one of vector type) and one pin (matrix type). The ouput is the same as the
+  * input matrix but with one column replaced with the input vector.
+  */
 class ReplaceCol[I,J,S](space:MatrixSpace[I,J,S],j:J) extends Node {
 
   val sockets = Set(in,replacement)

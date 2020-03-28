@@ -14,6 +14,10 @@ import vector.space.MatrixSpace
 
 import scala.collection.mutable
 
+/**
+  * Has one socket of matrix type and N pins of vector type. The output of the ith pin is equal to the ith row of the
+  * input.
+  */
 class RowSplit[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
 
   private val pinSpace:ContainerCompanion[I,Pin[J,S]] = space.outer.shape --> [Pin[J,S]]()
