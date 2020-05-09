@@ -54,7 +54,7 @@ class DiscreteFourierTransform[S](n:SequentialSpace[S])
 
   private val swap = new reindex.Permute(scalarSpace,product.rmap(n.shape,sum.commute(I,I)))
 
-  def feedback:LinearFunction[(Int,Either[Unit,Unit]),(Int,Either[Unit,Unit]),S] =
+  def linearFeedback:LinearFunction[(Int,Either[Unit,Unit]),(Int,Either[Unit,Unit]),S] =
     swap << this << swap
 
 }

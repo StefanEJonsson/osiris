@@ -23,6 +23,6 @@ class Identity[I,S](domain:VectorSpace[I,S])
 
   override def apply(x:Vector[I,S]):Vector[I,S] = x
 
-  override val feedback = this
+  override val linearFeedback = this
 
 }

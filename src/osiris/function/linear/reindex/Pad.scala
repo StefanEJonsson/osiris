@@ -22,7 +22,7 @@ class Pad[I,J,S](s:ScalarSpace[S],f:Monomorphism[J,I]) extends LinearFunction[I,
 
   def apply(x:Vector[J,S]):Vector[I,S] = (x | new Single(scalarSpace.zero)).reIndex(target,f.monoInverse)
 
-  def feedback:Extract[J,I,S] = new Extract(s,f)
+  def linearFeedback:Extract[J,I,S] = new Extract(s,f)
 
 }
 

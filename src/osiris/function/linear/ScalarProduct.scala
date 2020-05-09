@@ -25,6 +25,6 @@ class ScalarProduct[I,S](val domain:VectorSpace[I,S],k:S) extends LinearFunction
 
   def apply(x:Vector[I,S]):Vector[I,S] = x*k
 
-  def feedback = this
+  def linearFeedback = this
 
 }

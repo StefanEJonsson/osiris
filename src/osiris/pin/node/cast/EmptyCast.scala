@@ -4,8 +4,8 @@
 package osiris.pin.node.cast
 
 import osiris._
+import osiris.evaluator.environment.VectorEnvironment
 import pin.{EmptyPin, MatrixPin, Pin, Socket}
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.shape.Shape
 import osiris.vector.space.{EmptySpace, VectorSpace}
@@ -18,8 +18,8 @@ class EmptyCast[S](space:VectorSpace[Nothing,S]) extends Node {
   val sockets = Set(in)
   val pins = Set(out)
 
-  def eval(environment: Environment): Unit = {
-    environment.put(out,new Empty[S](space.scalarSpace))
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out,new Empty[S](space.scalarSpace))
   }
 
   def rowWise[I](shape:Shape[I],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
@@ -31,7 +31,7 @@ class EmptyCast[S](space:VectorSpace[Nothing,S]) extends Node {
     val space = EmptyCast.this.space
     val node = EmptyCast.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,new Empty[S](space.scalarSpace))
     }
 

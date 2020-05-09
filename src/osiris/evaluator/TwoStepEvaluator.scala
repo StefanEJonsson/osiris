@@ -1,7 +1,12 @@
+// SPDX-License-Identifier: GPL-2.1
+//Copyright © 2020 Stefán E. Jónsson
+
 package osiris.evaluator
 
-import osiris.pin.{Pin, Socket}
-import osiris.pin.node.Node
+import osiris.evaluator.compiler.Compiler
+import osiris.evaluator.machine.Machine
+import osiris.evaluator.environment.VectorEnvironment
+import osiris.pin.Pin
 
 /**
   * A base trait for evaluators that do the evaluation in two steps (analysis and computation). The two steps can be
@@ -10,34 +15,12 @@ import osiris.pin.node.Node
   * used multiple times to perform new computations, saving time in cases where the same computation graph has to be
   * evaluated multiple times.
   */
-trait TwoStepEvaluator extends Evaluator {
+class TwoStepEvaluator(compiler:Compiler,machine:Machine) extends Evaluator {
 
-  type Computation = Either[Node,Socket[_,_]]
-  type Analysis = (collection.mutable.ListBuffer[Computation],collection.mutable.Map[Either[Pin[_,_],Pin[_,_]],Int])
-
-  def eval(values: Iterable[Pin[_, _]], gradients: Iterable[Pin[_, _]]): Environment = {
-    compute(analysis(values,gradients))
+  def eval(values: Iterable[Pin[_, _]], gradients: Iterable[Pin[_, _]]): VectorEnvironment = {
+    val environment = new VectorEnvironment
+    machine.run(compiler.compile(values,gradients),environment)
+    environment
   }
-
-  def valueDependencies(computation: Computation):Set[Either[Pin[_,_],Pin[_,_]]] = {
-    computation match {
-      case Left(node) => node.sockets.map(s => Left(s.pin.get))
-      case Right(socket) => socket.feedbackDependencies
-    }
-  }
-
-  def computationDependencies(computation: Computation):Set[Computation] = {
-    computation match {
-      case Left(node) => node.sockets.map(s => Left(s.pin.get.node))
-      case Right(socket) => socket.feedbackDependencies.map {d => d match {
-        case Left(pin) => Set(Left(pin.node))
-        case Right(pin) => pin.sockets.map(Right(_))
-      }}.flatten
-    }
-  }
-
-  def analysis(values:Iterable[Pin[_,_]],gradients:Iterable[Pin[_,_]]):Analysis
-
-  def compute(analysis: Analysis,environment: Environment = new Environment()):Environment
 
 }

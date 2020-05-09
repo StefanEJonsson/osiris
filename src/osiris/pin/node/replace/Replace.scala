@@ -4,7 +4,7 @@
 package osiris.pin.node.replace
 
 import osiris._
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.pin.node.Node
 import osiris.shape.Shape
@@ -17,15 +17,15 @@ import scala.collection.mutable
   * Has two sockets (one vector and one singleton) and one pin (vector). The output is the same as the input vector but
   * with one element replaced by the singleton.
   */
-class Replace[I,S](space:VectorSpace[I,S],i:I) extends Node {
+class Replace[I,S](val space:VectorSpace[I,S],val i:I) extends Node {
 
   val sockets = Set(in,replacement)
   val pins = Set(out)
 
-  def eval(environment: Environment): Unit = {
+  def eval(environment: VectorEnvironment): Unit = {
     val value = environment(replacement.pin.get)
     val res = environment(in.pin.get).replace(i,value())
-    environment.put(out,res)
+    environment.putValue(out,res)
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -41,7 +41,7 @@ class Replace[I,S](space:VectorSpace[I,S],i:I) extends Node {
     val space = Replace.this.space
     val node = Replace.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       val feedback = environment.feedback(out).replace(i,space.scalarSpace.zero)
       environment.putFeedback(pin.get,feedback)
     }
@@ -55,7 +55,7 @@ class Replace[I,S](space:VectorSpace[I,S],i:I) extends Node {
     val space = I --> Replace.this.space.scalarSpace
     val node = Replace.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       val feedback = new Single(environment.feedback(out)(i))
       environment.putFeedback(pin.get,feedback)
     }

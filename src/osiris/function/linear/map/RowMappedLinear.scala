@@ -35,6 +35,6 @@ class RowMappedLinear[I,J1,J2,S](outer:VectorSpace[I,S], f:LinearFunction[J2,J1,
 
   def apply(x:Vector[(I,J1),S]):Matrix[I,J2,S] = x.asMatrix.rowMap(f.target,f)
 
-  def feedback = new RowMappedLinear(outer,f.feedback)
+  def linearFeedback = new RowMappedLinear(outer,f.linearFeedback)
 
 }

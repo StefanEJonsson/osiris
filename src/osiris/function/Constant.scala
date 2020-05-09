@@ -26,7 +26,7 @@ class Constant[I,S](c:Vector[I,S]) extends VectorFunction[I,Nothing,S] {
 
   def apply(x:Vector[Nothing,S]): Vector[I,S] = c
 
-  def feedback(x:Vector[Nothing,S],y:Vector[I,S]):Vector[Nothing,S] = new Empty[S](scalarSpace)
+  def feedback:VectorFunction[Nothing,+[Nothing,I],S] = DeadInput(domain+target)
 
 }
 

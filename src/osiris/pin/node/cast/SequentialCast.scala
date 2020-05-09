@@ -3,7 +3,7 @@
 
 package osiris.pin.node.cast
 
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.node.Node
 import osiris.pin.{MatrixPin, Pin, SequentialPin, Socket}
 import osiris.shape.Shape
@@ -17,8 +17,8 @@ class SequentialCast[S](space:VectorSpace[Int,S]) extends Node {
   val sockets = Set(in)
   val pins = Set(out)
 
-  def eval(environment: Environment): Unit = {
-    environment.put(out,environment(in.pin.get).asSequential)
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out,environment(in.pin.get).asSequential)
   }
 
   def rowWise[I](shape:Shape[I],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
@@ -30,7 +30,7 @@ class SequentialCast[S](space:VectorSpace[Int,S]) extends Node {
     val space = SequentialCast.this.space
     val node = SequentialCast.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(out))
     }
 

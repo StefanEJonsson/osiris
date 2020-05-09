@@ -28,7 +28,7 @@ class Extract[A,B,S](s:ScalarSpace[S],f:Monomorphism[A,B])
   def serialize:Iterable[Byte] =
     Iterable(v2.Function.constants.extract) ++ f.serialize
 
-  def feedback:Pad[B,A,S] = new Pad(s,f)
+  def linearFeedback:Pad[B,A,S] = new Pad(s,f)
 
 }
 

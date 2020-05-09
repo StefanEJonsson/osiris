@@ -3,6 +3,7 @@
 
 package osiris.function.map
 
+import osiris.+
 import osiris.function.{ScalarFunction, VectorFunction}
 import osiris.utilities.serialization.v2
 import osiris.vector._
@@ -30,7 +31,8 @@ class Map[I,S](val domain:VectorSpace[I,S], f:ScalarFunction[S])
 
   def apply(x:Vector[I,S]):Vector[I,S] = x.map(f)
 
-  def feedback(x:Vector[I,S],y:Vector[I,S]):Vector[I,S] = new Map(domain,f.derivative)(x) o y
+  def feedback:VectorFunction[I,+[I,I],S] =
+    new osiris.function.bilinear.ElementWiseMultiplication(domain) << new LMap(new Map(domain,f.derivative),domain)
 
 }
 

@@ -4,9 +4,9 @@
 package osiris.pin.variable
 
 import osiris._
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.morphism.{Morphism, bool}
 import osiris.pin.{MatrixPin, Pin}
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.shape.Shape
 import osiris.vector._
@@ -29,8 +29,8 @@ class Variable[I,S](val init:Vector[I,S]) extends Pin[I,S] {
     val sockets = Set()
     val pins = Set(Variable.this)
 
-    def eval(environment: Environment): Unit = {
-      environment.put(Variable.this,data)
+    def eval(environment: VectorEnvironment): Unit = {
+      environment.putValue(Variable.this,data)
     }
 
     def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {

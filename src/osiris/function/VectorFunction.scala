@@ -40,7 +40,9 @@ trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 
-  def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S]
+  def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S] = feedback(x|y)
+
+  def feedback:VectorFunction[J,+[J,I],S]
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 

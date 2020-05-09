@@ -31,7 +31,7 @@ class Addition[I,S](val target:VectorSpace[I,S]) extends LinearFunction[I,Either
     xp.left + xp.right
   }
 
-  def feedback = new Copy(target)
+  def linearFeedback = new Copy(target)
 
 }
 
@@ -50,7 +50,7 @@ class Sum[J,S](val domain:VectorSpace[J,S]) extends LinearFunction[Unit,J,S] {
 
   def apply(x:Vector[J,S]):Vector[Unit,S] = target.fill(x.sum)
 
-  def feedback = new Fill(domain)
+  def linearFeedback = new Fill(domain)
 
 }
 
@@ -70,7 +70,7 @@ class RowSum[I,J,S](outer:VectorSpace[I,S],inner:VectorSpace[J,S]) extends Linea
 
   def apply(x:Vector[(I,J),S]):Vector[I,S] = x.asMatrix.rowSum
 
-  def feedback = new ColCopy(outer,inner)
+  def linearFeedback = new ColCopy(outer,inner)
 
 }
 
@@ -90,6 +90,6 @@ class ColSum[I,J,S](outer:VectorSpace[I,S],inner:VectorSpace[J,S]) extends Linea
 
   def apply(x:Vector[(I,J),S]):Vector[J,S] = x.asMatrix.colSum
 
-  def feedback = new RowCopy(outer,inner)
+  def linearFeedback = new RowCopy(outer,inner)
 
 }

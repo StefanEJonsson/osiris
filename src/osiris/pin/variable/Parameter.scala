@@ -7,9 +7,9 @@ import osiris.pin.{MatrixPin, Pin}
 import osiris.vector._
 import java.io.File
 
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.morphism.{Morphism, bool}
 import osiris.pin.node.Node
-import osiris.evaluator.Environment
 import osiris.function
 import osiris.shape.Shape
 import osiris.vector.space.{EmptySpace, MatrixSpace, VectorSpace}
@@ -39,8 +39,8 @@ class Parameter[I,S](val name:String, init:Vector[I,S])
     val sockets = Set()
     val pins = Set(Parameter.this)
 
-    def eval(environment: Environment): Unit = {
-      environment.put(Parameter.this,param)
+    def eval(environment: VectorEnvironment): Unit = {
+      environment.putValue(Parameter.this,param)
     }
 
     def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {

@@ -4,8 +4,8 @@
 package osiris.improver
 
 import osiris._
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.Socket
-import osiris.evaluator.Environment
 import osiris.pin.variable.Parameter
 import osiris.utilities.serialization
 import osiris.utilities.serialization.v2
@@ -128,7 +128,7 @@ trait Improver[S] {
     * Makes a small adjustment to parameters to achieve all objectives connected to parameters.
     */
   def step(parameter:Parameter[_,S]*): Unit = {
-    val grad:Environment = evaluator.gradients(parameter:_*)
+    val grad:VectorEnvironment = evaluator.gradients(parameter:_*)
     parameter.foreach {p =>
       if (!parameters.contains(p)) {
         parameters(p) = this(p)

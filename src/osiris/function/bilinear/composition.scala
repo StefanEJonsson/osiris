@@ -32,9 +32,9 @@ class LinearComposeBilinear[I,J,L,R,S](f:LinearFunction[I,J,S],g:BilinearFunctio
     Iterable(v2.Function.constants.linearComposeBilinear) ++
     f.serialize ++ g.serialize
 
-  def rightFeedback:BilinearFunction[R,I,L,S] = g.rightFeedback.<</(f.feedback)
+  def rightFeedback:BilinearFunction[R,I,L,S] = g.rightFeedback.<</(f.linearFeedback)
 
-  def leftFeedback:BilinearFunction[L,I,R,S] = g.leftFeedback.<</(f.feedback)
+  def leftFeedback:BilinearFunction[L,I,R,S] = g.leftFeedback.<</(f.linearFeedback)
 
   override def apply(x:Vector[Either[L,R],S]):Vector[I,S] = f(g(x))
 
@@ -81,7 +81,7 @@ class BilinearLeftComposeLinear[I,L2,L1,R,S](f:BilinearFunction[I,L2,R,S],g:Line
     f(iiSpace,llSpace,rrSpace,ll,r,op)
   }
 
-  def  leftFeedback = g.feedback << f.leftFeedback
+  def  leftFeedback = g.linearFeedback << f.leftFeedback
   def rightFeedback = f.rightFeedback <<\ g
 
 }
@@ -123,6 +123,6 @@ class BilinearRightComposeLinear[I,L,R1,R2,S](f:BilinearFunction[I,L,R2,S],g:Lin
   }
 
   def  leftFeedback = f.leftFeedback <<\ g
-  def rightFeedback = g.feedback << f.rightFeedback
+  def rightFeedback = g.linearFeedback << f.rightFeedback
 
 }

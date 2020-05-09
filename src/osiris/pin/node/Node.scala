@@ -3,7 +3,7 @@
 
 package osiris.pin.node
 
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.shape.Shape
 
@@ -16,7 +16,7 @@ trait Node {
   val sockets:Set[Socket[_,_]]
   val pins:Set[Pin[_,_]]
 
-  def eval(environment:Environment)
+  def eval(environment:VectorEnvironment)
 
   def rowWise[I](shape:Shape[I],matrixifiedPins:collection.mutable.Map[Pin[_,_],MatrixPin[I,_,_]])
 

@@ -35,6 +35,6 @@ class ColMappedLinear[I1,I2,J,S](inner:VectorSpace[J,S], f:LinearFunction[I2,I1,
 
   def apply(x:Vector[(I1,J),S]):Matrix[I2,J,S] = x.asMatrix.colMap(f.target,f)
 
-  def feedback = new ColMappedLinear(inner,f.feedback)
+  def linearFeedback = new ColMappedLinear(inner,f.linearFeedback)
 
 }

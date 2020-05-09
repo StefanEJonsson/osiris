@@ -26,6 +26,6 @@ class ComposedLinear[I,K,J,S](outer:LinearFunction[I,K,S],inner:LinearFunction[K
 
   def apply(x:Vector[J,S]):Vector[I,S] = outer(inner(x))
 
-  def feedback = inner.feedback << outer.feedback
+  def linearFeedback = inner.linearFeedback << outer.linearFeedback
 
 }

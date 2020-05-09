@@ -16,7 +16,7 @@ class Permute[I,J,S](s:ScalarSpace[S],f:Isomorphism[I,J])
   def serialize:Iterable[Byte] =
     Iterable(v2.Function.constants.permute) ++ f.serialize
 
-  def feedback = new Permute(s,f.inverse)
+  def linearFeedback = new Permute(s,f.inverse)
 
 }
 

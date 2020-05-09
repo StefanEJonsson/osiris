@@ -6,7 +6,7 @@ package osiris.pin
 import osiris._
 import vector._
 import function._
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.morphism._
 import osiris.pin.node.Node
 import osiris.pin.node.merge.{Merge, PairMerge}

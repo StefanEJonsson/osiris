@@ -22,7 +22,7 @@ class DeadInput[J,S](val domain:VectorSpace[J,S]) extends VectorFunction[Nothing
 
   def apply(x: Vector[J, S]): Vector[Nothing, S] = target((i:Nothing) => utilities.absurd(i))
 
-  def feedback(x:Vector[J,S],y:Vector[Nothing,S]) = domain.zeros
+  def feedback:VectorFunction[J,+[J,Nothing],S] = new Constant(domain.zeros) << new DeadInput(domain +[Nothing] target)
 
 }
 

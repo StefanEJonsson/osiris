@@ -3,7 +3,6 @@
 
 package osiris
 
-
 import osiris.utilities.serialization.v2.Primitives
 import osiris.vector.space.SequentialSpace
 

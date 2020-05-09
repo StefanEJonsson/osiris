@@ -3,7 +3,8 @@
 
 package osiris.function.map
 
-import osiris.function.VectorFunction
+import osiris.+
+import osiris.function.{Lambda, VectorFunction}
 import osiris.utilities.serialization.v2
 import osiris.vector.{Pair, Vector}
 
@@ -28,10 +29,13 @@ class BiMap[IL,IR,JL,JR,S](left:VectorFunction[IL,JL,S], right:VectorFunction[IR
     left(xp.left) | right(xp.right)
   }
 
-  def feedback(x:Vector[Either[JL,JR],S],y:Vector[Either[IL,IR],S]):Vector[Either[JL,JR],S] = {
-    val xp = x.asPair[JL,JR,Either[JL,JR]]
-    val yp = y.asPair[IL,IR,Either[IL,IR]]
-    Pair(left.feedback(xp.left,yp.left),right.feedback(xp.right,yp.right))
-  }
+  def feedback:VectorFunction[+[JL,JR],+[+[JL,JR],+[IL,IR]],S] = new Lambda(
+    domain + target, x => {
+      val xp = x.asPair[+[JL,JR],+[IL,IR],+[+[JL,JR],+[IL,IR]]]
+      val input = xp.left.asPair[JL,JR,+[JL,JR]]
+      val feed = xp.right.asPair[IL,IR,+[IL,IR]]
+      left.feedback(input.left | feed.left) | right.feedback(input.right | feed.right)
+    }
+  )
 
 }

@@ -3,7 +3,8 @@
 
 package osiris.function.map
 
-import osiris.function.VectorFunction
+import osiris.+
+import osiris.function.{Lambda, VectorFunction}
 import osiris.morphism.product
 import osiris.utilities.serialization.v2
 import osiris.vector.{Pair, Vector}
@@ -41,11 +42,18 @@ class ColWise[I,IL,IR,J,S](inner:VectorSpace[J,S],f:VectorFunction[I,Either[IL,I
     xl.colWise(f.target,(x:Vector[IL,S],y:Vector[IR,S]) => f(Pair(x,y)))(xr)
   }
 
-  def feedback(x:Vector[Either[(IL,J),(IR,J)],S],y:Vector[(I,J),S]):Vector[Either[(IL,J),(IR,J)],S] = {
-    val xm = x.reIndex((l+r)*inner,product.rightDistr[IL,IR,J](l.shape,r.shape,inner.shape)).asMatrix[Either[IL,IR],J,(Either[IL,IR],J)]
-    xm.colWise(l+r,
-      (x:Vector[Either[IL,IR],S],y:Vector[I,S]) => f.feedback(x,y)
-    )(y.asMatrix).reIndex(domain,product.rightExtract[IL,IR,J](l.shape,r.shape,inner.shape))
-  }
+  def feedback:VectorFunction[+[(IL,J),(IR,J)],+[+[(IL,J),(IR,J)],(I,J)],S] = new Lambda(
+    domain + target, x => {
+
+      val xp = x.asPair[+[(IL,J),(IR,J)],(I,J),+[+[(IL,J),(IR,J)],(I,J)]]
+      val input = xp.left.asPair[(IL,J),(IR,J),+[(IL,J),(IR,J)]]
+      val left = input.left.asMatrix[IL,J,(IL,J)]
+      val right = input.right.asMatrix[IR,J,(IR,J)]
+      val feed = xp.right.asMatrix[I,J,(I,J)]
+
+      val res = (f.domain * inner).cols((j:J) => f.feedback((left.col(j)| right.col(j)) | feed.col(j)))
+      res.permute(product.rightExtract(left.space.outer.shape,right.space.outer.shape,inner.shape))
+    }
+  )
 
 }

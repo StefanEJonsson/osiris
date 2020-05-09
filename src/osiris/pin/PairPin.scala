@@ -64,4 +64,6 @@ trait PairPin[L,R,S] extends Pin[Either[L,R],S] {
 
   override def o(that:Pin[Either[L,R],S]):PairPin[L,R,S] = super.o(that).asPair
 
+  override def asPair[LL,RR,P<:Either[LL,RR] with Either[L,R]]:PairPin[LL,RR,S] = this.asInstanceOf[PairPin[LL,RR,S]]
+
 }

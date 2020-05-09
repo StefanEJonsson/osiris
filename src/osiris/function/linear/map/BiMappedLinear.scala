@@ -36,6 +36,6 @@ class BiMappedLinear[L1,L2,R1,R2,S](l:LinearFunction[L2,L1,S],r:LinearFunction[R
 
   def apply(x:Vector[Either[L1,R1],S]):Pair[L2,R2,S] = x.asPair.bimap(l,r)
 
-  def feedback = new BiMappedLinear(l.feedback,r.feedback)
+  def linearFeedback = new BiMappedLinear(l.linearFeedback,r.linearFeedback)
 
 }

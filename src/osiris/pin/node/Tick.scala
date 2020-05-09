@@ -3,7 +3,7 @@
 
 package osiris.pin.node
 
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.shape.Shape
 import osiris.vector.Vector
@@ -26,13 +26,13 @@ import scala.collection.mutable
   * gets multiplied by the discount factor once for every unit of time that separates the action from the consequence,
   * making the feedback go to zero as the delay goes to infinity.
   */
-class Tick[I,S](space:VectorSpace[I,S],discountFactor:S) extends Node {
+class Tick[I,S](val space:VectorSpace[I,S],val discountFactor:S) extends Node {
 
   val sockets = Set(in)
   val pins = Set(out)
 
-  def eval(environment: osiris.evaluator.Environment): Unit = {
-    environment.put(out,environment(in.pin.get))
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out,environment(in.pin.get))
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -46,7 +46,7 @@ class Tick[I,S](space:VectorSpace[I,S],discountFactor:S) extends Node {
     val space = Tick.this.space
     val node = Tick.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(out)*discountFactor)
     }
 

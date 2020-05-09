@@ -4,6 +4,9 @@
 package osiris.evaluator
 
 import osiris._
+import osiris.evaluator.compiler.{BFSCompiler, Program}
+import osiris.evaluator.machine.{MultiThreaded, SingleThreaded}
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.node.Node
 import pin._
 import vector._
@@ -14,13 +17,13 @@ import vector._
   */
 trait Evaluator {
 
-  def eval(values: Iterable[Pin[_, _]], gradients: Iterable[Pin[_, _]]): Environment
+  def eval(values: Iterable[Pin[_, _]], gradients: Iterable[Pin[_, _]]): VectorEnvironment
 
-  def values(pins:Pin[_,_]*):Environment = eval(pins,Set())
+  def values(pins:Pin[_,_]*):VectorEnvironment = eval(pins,Set())
 
   def value[I,S](pin:Pin[I,S]):Vector[I,S] = values(pin)(pin)
 
-  def gradients(pins:Pin[_,_]*):Environment = eval(Set(),pins)
+  def gradients(pins:Pin[_,_]*):VectorEnvironment = eval(Set(),pins)
 
   def gradient[I,S](pin:Pin[I,S]):Vector[I,S] = gradients(pin).feedback(pin)
 
@@ -28,12 +31,12 @@ trait Evaluator {
 
 object Evaluator {
 
-  def apply():Evaluator = new BFSAnalysis with SingleThreaded
+  def apply():Evaluator = new TwoStepEvaluator(new BFSCompiler,new SingleThreaded)
 
-  def apply(nThreads:Int):Evaluator =
-    new BFSAnalysis with MultiThreaded {
-      val n:Int = nThreads
-      init()
-    }
+  def apply(nThreads:Int):Evaluator = new TwoStepEvaluator(new BFSCompiler,new MultiThreaded(nThreads))
+
+  def static():Evaluator = new StaticEvaluator(new BFSCompiler, new SingleThreaded)
+
+  def static(nThreads:Int):Evaluator = new StaticEvaluator(new BFSCompiler, new MultiThreaded(nThreads))
 
 }

@@ -5,8 +5,8 @@ package osiris.pin.node.merge
 
 import osiris._
 import container.companion.ContainerCompanion
+import osiris.evaluator.environment.VectorEnvironment
 import pin.{MatrixPin, Pin, Socket}
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.shape.Shape
 import vector.Single
@@ -27,8 +27,8 @@ class Merge[I,S](space:VectorSpace[I,S]) extends Node {
   val pins = Set(out)
   val sockets = in.iterator.toSet   //TODO change specification so that sockets doesn't have to be set (just any collection)
 
-  def eval(environment: Environment): Unit = {
-    environment.put(out,space.apply( (i:I) => environment(in(i).pin.get).asSingle.value ))
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out,space.apply((i:I) => environment(in(i).pin.get).asSingle.value ))
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -51,7 +51,7 @@ class Merge[I,S](space:VectorSpace[I,S]) extends Node {
     val space = I --> Merge.this.space.scalarSpace
     val node = Merge.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,new Single(environment.feedback(out)(i)))
     }
 

@@ -5,8 +5,8 @@ package osiris.pin.node.split
 
 import osiris._
 import container.companion.ContainerCompanion
+import osiris.evaluator.environment.VectorEnvironment
 import pin.{MatrixPin, Pin, Socket}
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.pin.node.merge.Merge
 import osiris.shape.Shape
@@ -28,8 +28,8 @@ class Split[I,S](space:VectorSpace[I,S]) extends Node {
   val pins = out.iterator.toSet //TODO
   val sockets = Set(in)
 
-  def eval(environment: Environment): Unit = {
-    space.shape.foreach( i => environment.put(out(i), new Single(environment(in.pin.get)(i)) ))
+  def eval(environment: VectorEnvironment): Unit = {
+    space.shape.foreach( i => environment.putValue(out(i), new Single(environment(in.pin.get)(i)) ))
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -47,7 +47,7 @@ class Split[I,S](space:VectorSpace[I,S]) extends Node {
 
     val node = Split.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,space( (i:I) => environment.feedback(out(i)).asSingle.value))
     }
 

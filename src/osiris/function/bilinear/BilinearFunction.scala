@@ -181,9 +181,12 @@ trait BilinearFunction[I,L,R,S] extends VectorFunction[I,Either[L,R],S] {
     */
   def rightFeedback:BilinearFunction[R,I,L,S]
 
-  override def feedback(x:Vector[Either[L,R],S],y:Vector[I,S]):Vector[Either[L,R],S] = {
-    val xp = x.asPair[L,R,Either[L,R]]
-    Pair(leftFeedback(y|xp.right),rightFeedback(y|xp.left))
-  }
+  override def feedback:VectorFunction[+[L,R],+[+[L,R],I],S] = new Lambda(
+    domain + target, x => {
+    val xp = x.asPair[+[L,R],I,+[+[L,R],I]]
+    val input = xp.left.asPair[L,R,+[L,R]]
+    val feed = xp.right
+    leftFeedback(feed | input.right) | rightFeedback(feed | input.left)
+  })
 
 }

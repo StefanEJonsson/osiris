@@ -3,7 +3,7 @@
 
 package osiris.pin.node.replace
 
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.pin.node.Node
 import osiris.shape.Shape
@@ -15,15 +15,15 @@ import scala.collection.mutable
   * Has two sockets (one of matrix type and one of vector type) and one pin (matrix type). The ouput is the same as the
   * input matrix but with one column replaced with the input vector.
   */
-class ReplaceCol[I,J,S](space:MatrixSpace[I,J,S],j:J) extends Node {
+class ReplaceCol[I,J,S](val space:MatrixSpace[I,J,S],val j:J) extends Node {
 
   val sockets = Set(in,replacement)
   val pins = Set(out)
 
-  def eval(environment: Environment): Unit = {
+  def eval(environment: VectorEnvironment): Unit = {
     val value = environment(replacement.pin.get)
     val res = environment(in.pin.get).asMatrix.replaceCol(j,value)
-    environment.put(out,res)
+    environment.putValue(out,res)
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -47,7 +47,7 @@ class ReplaceCol[I,J,S](space:MatrixSpace[I,J,S],j:J) extends Node {
     val space = ReplaceCol.this.space
     val node = ReplaceCol.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       val feedback = environment.feedback(out).asMatrix[I,J,(I,J)].replaceCol(j,space.outer.zeros)
       environment.putFeedback(pin.get,feedback)
     }
@@ -61,7 +61,7 @@ class ReplaceCol[I,J,S](space:MatrixSpace[I,J,S],j:J) extends Node {
     val space = ReplaceCol.this.space.outer
     val node = ReplaceCol.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       val feedback = environment.feedback(out).asMatrix[I,J,(I,J)].col(j)
       environment.putFeedback(pin.get,feedback)
     }

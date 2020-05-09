@@ -21,7 +21,7 @@ class SimpleLinear[I,J,S](val k:Matrix[I,J,S]) extends LinearFunction[I,J,S] {
 
   def apply(x:Vector[J,S]):Vector[I,S] = k*x
 
-  def feedback = new SimpleLinear(k.transpose)
+  def linearFeedback = new SimpleLinear(k.transpose)
 
   def <<[J0](that:SimpleLinear[J,J0,S]):SimpleLinear[I,J0,S] = new SimpleLinear(this.k * that.k)
 

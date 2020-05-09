@@ -1,6 +1,6 @@
 package osiris.function
 
-import osiris.utilities
+import osiris.{+, utilities}
 import osiris.utilities.serialization.v2
 import osiris.vector.Vector
 
@@ -30,6 +30,11 @@ case class Composition[I,K,J,S](outer:VectorFunction[I,K,S], inner:VectorFunctio
 
   def apply(x: Vector[J, S]): Vector[I, S] = outer(inner(x))
 
-  def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S] = inner.feedback(x,outer.feedback(inner(x),y))
+  def feedback:VectorFunction[J,+[J,I],S] =
+    new Lambda(domain + target, x => {
+      val xp = x.asPair[J,I,+[J,I]]
+      inner.feedback(xp.left | outer.feedback(inner(xp.left)|xp.right))
+    }
+    )
 
 }

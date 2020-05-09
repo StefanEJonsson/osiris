@@ -35,6 +35,6 @@ class RMappedLinear[L,R1,R2,S](l:VectorSpace[L,S],r:LinearFunction[R2,R1,S])
 
   def apply(x:Vector[Either[L,R1],S]):Pair[L,R2,S] = x.asPair.rmap(r)
 
-  def feedback = new RMappedLinear(l,r.feedback)
+  def linearFeedback = new RMappedLinear(l,r.linearFeedback)
 
 }
