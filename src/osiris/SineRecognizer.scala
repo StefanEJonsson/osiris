@@ -1,0 +1,5 @@
+package osiris
+
+object SineRecognizer {
+
+}

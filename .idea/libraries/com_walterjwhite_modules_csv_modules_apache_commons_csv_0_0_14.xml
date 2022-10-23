@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="com.walterjwhite.modules.csv.modules:apache-commons-csv:0.0.14" type="repository">
+    <properties include-transitive-deps="false" maven-id="com.walterjwhite.modules.csv.modules:apache-commons-csv:0.0.14" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/apache-commons-csv-0.0.14.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
