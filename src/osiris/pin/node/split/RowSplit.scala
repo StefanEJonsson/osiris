@@ -5,8 +5,8 @@ package osiris.pin.node.split
 
 import osiris._
 import container.companion.ContainerCompanion
+import osiris.evaluator.environment.VectorEnvironment
 import pin.{MatrixPin, Pin, Socket}
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.pin.node.merge.RowMerge
 import osiris.shape.Shape
@@ -14,6 +14,10 @@ import vector.space.MatrixSpace
 
 import scala.collection.mutable
 
+/**
+  * Has one socket of matrix type and N pins of vector type. The output of the ith pin is equal to the ith row of the
+  * input.
+  */
 class RowSplit[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
 
   private val pinSpace:ContainerCompanion[I,Pin[J,S]] = space.outer.shape --> [Pin[J,S]]()
@@ -23,8 +27,8 @@ class RowSplit[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
   val pins = out.iterator.toSet
   val sockets = Set(in)
 
-  def eval(environment: Environment): Unit = {
-    space.outer.shape.foreach( i => environment.put(out(i), environment(in.pin.get).asMatrix[I,J,(I,J)].row(i)))
+  def eval(environment: VectorEnvironment): Unit = {
+    space.outer.shape.foreach( i => environment.putValue(out(i), environment(in.pin.get).asMatrix[I,J,(I,J)].row(i)))
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -47,7 +51,7 @@ class RowSplit[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
     val space:MatrixSpace[I,J,S] = RowSplit.this.space
     val node = RowSplit.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,space.rows(i => environment.feedback(out(i))))
     }
 

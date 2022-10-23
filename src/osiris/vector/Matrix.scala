@@ -90,6 +90,9 @@ class UnCurry[I,J,S](original:container.Container[I,Vector[J,S]],val inner:Vecto
 
   def apply(t:((I,J))):S =  original(t._1)(t._2)
 
+  def serialize: Iterable[Byte] =
+    Iterable(utilities.serialization.v2.Vector.rows) ++ original.iterator.flatMap(v => v.serialize)
+
 }
 
 class ReplacedRow[I,J,S](original:Matrix[I,J,S],replacements:Map[I,Vector[J,S]]) extends Matrix[I,J,S] {
@@ -116,6 +119,9 @@ class ReplacedRow[I,J,S](original:Matrix[I,J,S],replacements:Map[I,Vector[J,S]])
   override def replaceCol(j:J, value:Vector[I,S]):Matrix[I,J,S] =
     new ReplacedRow(original.replaceCol(j,value),replacements)
 
+  def serialize: Iterable[Byte] =
+    Iterable(utilities.serialization.v2.Vector.elems) ++ iterator.flatMap(space.scalarSpace.serialize(_))
+
 }
 
 class ReplacedCol[I,J,S](original:Matrix[I,J,S],replacements:Map[J,Vector[I,S]]) extends Matrix[I,J,S] {
@@ -141,5 +147,8 @@ class ReplacedCol[I,J,S](original:Matrix[I,J,S],replacements:Map[J,Vector[I,S]])
     val r = replacements + (j -> value)
     if (r.size == outer.shape.size) {space((t:(I,J)) => r(t._2)(t._1))} else {new ReplacedCol(original,r)}
   }
+
+  def serialize: Iterable[Byte] =
+    Iterable(utilities.serialization.v2.Vector.elems) ++ iterator.flatMap(space.scalarSpace.serialize(_))
 
 }

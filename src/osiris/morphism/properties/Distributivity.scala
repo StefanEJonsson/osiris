@@ -6,7 +6,13 @@ package osiris.morphism.properties
 import osiris._
 import osiris.shape.Shape
 import morphism.Isomorphism
+import osiris.utilities.serialization.v2
 
+/**
+  * Contains the Isomorphisms leftDistr, rightDistr, leftExtract and rightExtract.
+  *
+  * leftDistr and leftExtract are each others inverses. rightDistr and rightExtract are each others inverses.
+  */
 trait Distributivity[F[_,_],G[_,_]] {
 
   protected def F[A,B](a:Shape[A], b:Shape[B]):Shape[F[A,B]]
@@ -31,7 +37,7 @@ trait Distributivity[F[_,_],G[_,_]] {
     def apply(x:F[A,G[B,C]]):G[F[A,B],F[A,C]] = ld(x)
 
     def serialize:Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.distrLeft) ++ a.serialize ++ b.serialize ++ c.serialize
+      Iterable(v2.Morphism.constants.distrLeft) ++ a.serialize ++ b.serialize ++ c.serialize
 
     override def toString():String = s"leftDistr($a,$b,$c)"
 
@@ -47,7 +53,7 @@ trait Distributivity[F[_,_],G[_,_]] {
     def apply(x:F[G[A,B],C]):G[F[A,C],F[B,C]] = rd(x)
 
     def serialize:Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.distrRight) ++ a.serialize ++ b.serialize ++ c.serialize
+      Iterable(v2.Morphism.constants.distrRight) ++ a.serialize ++ b.serialize ++ c.serialize
 
     override def toString():String = s"rightDistr($a,$b,$c)"
 
@@ -64,7 +70,7 @@ trait Distributivity[F[_,_],G[_,_]] {
       def apply(x:G[F[A,B],F[A,C]]):F[A,G[B,C]] = le(x)
 
       def serialize:Iterable[Byte] =
-        Iterable(utilities.Serialization.Morphism.extractLeft) ++ a.serialize ++ b.serialize ++ c.serialize
+        Iterable(v2.Morphism.constants.extractLeft) ++ a.serialize ++ b.serialize ++ c.serialize
 
       override def toString():String = s"leftExtract($a,$b,$c)"
 
@@ -81,7 +87,7 @@ trait Distributivity[F[_,_],G[_,_]] {
       def apply(x:G[F[A,C],F[B,C]]):F[G[A,B],C] = re(x)
 
       def serialize:Iterable[Byte] =
-        Iterable(utilities.Serialization.Morphism.extractRight) ++ a.serialize ++ b.serialize ++ c.serialize
+        Iterable(v2.Morphism.constants.extractRight) ++ a.serialize ++ b.serialize ++ c.serialize
 
       override def toString():String = s"rightExtract($a,$b,$c)"
 

@@ -8,6 +8,12 @@ import osiris.evaluator.Evaluator
 import osiris.vector.space.VectorSpace
 import vector.{Empty, Vector}
 
+/**
+  * Simple gradient descent.
+  * @param rate the learning rate. High values  => fast but has a tendency to overshoot. Low values => slow
+  * @param evaluator the evaluator used to compute gradients needed.
+  * @tparam S scalar type.
+  */
 class Vanilla[S](rate:S,val evaluator:Evaluator) extends Improver[S] {
 
   private[improver] type State[P] = Nothing

@@ -4,7 +4,7 @@
 package osiris.pin.node.cast
 
 import osiris.+
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin.node.Node
 import osiris.pin.{MatrixPin, PairPin, Pin, Socket}
 import osiris.shape.Shape
@@ -18,8 +18,8 @@ class PairCast[L,R,S](space:VectorSpace[Either[L,R],S]) extends Node {
   val sockets = Set(in)
   val pins = Set(out)
 
-  def eval(environment: Environment): Unit = {
-    environment.put(out,environment(in.pin.get).asPair[L,R,+[L,R]])
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out,environment(in.pin.get).asPair[L,R,+[L,R]])
   }
 
   def rowWise[I](shape:Shape[I],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
@@ -31,7 +31,7 @@ class PairCast[L,R,S](space:VectorSpace[Either[L,R],S]) extends Node {
     val space = PairCast.this.space
     val node = PairCast.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(out))
     }
 

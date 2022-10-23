@@ -5,6 +5,9 @@ package osiris.evaluator
 
 import osiris.pin.Pin
 
+/**
+  * Does the analysis step of a TwoStepEvaluator using Breadth First Search in the computation graph.
+  */
 trait BFSAnalysis extends TwoStepEvaluator {
 
   def analysis(values:Iterable[Pin[_,_]],gradients:Iterable[Pin[_,_]]): Analysis = {

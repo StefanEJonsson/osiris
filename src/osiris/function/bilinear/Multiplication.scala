@@ -5,16 +5,22 @@ package osiris.function.bilinear
 
 import osiris._
 import osiris.morphism._
+import osiris.utilities.serialization.v2
 import osiris.vector._
 import osiris.vector.space.VectorSpace
 
+/**
+  * Ordinary multiplication of scalars
+  */
 case class Multiplication[S](space:ScalarSpace[S]) extends BilinearFunction[Unit,Unit,Unit,S] {
 
   val left   = I --> space
   val right  = I --> space
   val target = I --> space
 
-  override def toString():String = s"Mul $space"
+  override def toString():String = "Mul"
+
+  def serialize:Iterable[Byte] = Iterable(v2.Function.constants.multiplication)
 
   def predicate(index:(Unit,(Unit,Unit))):Boolean = true
 
@@ -34,6 +40,12 @@ case class Multiplication[S](space:ScalarSpace[S]) extends BilinearFunction[Unit
   def leftFeedback = this
 
   def rightFeedback = this
+
+}
+
+object Multiplication {
+
+  def apply[S](space:ScalarSpace[S]):Multiplication[S] = new Multiplication(space)
 
 }
 

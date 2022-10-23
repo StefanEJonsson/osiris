@@ -4,8 +4,14 @@
 package osiris.morphism
 
 import osiris._
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.v2.Primitives
 import shape.Range
 
+/**
+  * Important morphisms associated with Int.
+  */
 object int {
 
   def translate(dx:Int,dom:Range):Isomorphism[Int,Int] = new Isomorphism[Int,Int] {
@@ -16,8 +22,8 @@ object int {
     override def toString():String = s"translate($dom,$dx)"
 
     def serialize: Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.translate) ++
-        dom.serialize ++ utilities.Serialization.Primitives.serializeInt(dx)
+      Iterable(v2.Morphism.constants.translate) ++
+        dom.serialize ++ Primitives.serializeInt(dx)
 
     def apply(x:Int):Int = x + dx
 
@@ -32,7 +38,7 @@ object int {
 
     override def toString():String = s"inv($dom)"
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.inv) ++ dom.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.inv) ++ dom.serialize
 
     def apply(x:Int):Int = -x
 

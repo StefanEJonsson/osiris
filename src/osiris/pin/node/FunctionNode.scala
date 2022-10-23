@@ -3,18 +3,23 @@
 
 package osiris.pin.node
 
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.function.VectorFunction
-import osiris.evaluator.Environment
 import osiris.pin.{MatrixPin, Pin, Socket}
 import osiris.shape.Shape
 
-class FunctionNode[I,J,S](f:VectorFunction[I,J,S]) extends Node {
+/**
+  * A [Node] where the computation is given by a [VectorFunction].
+  */
+class FunctionNode[I,J,S](val f:VectorFunction[I,J,S]) extends Node {
 
   val sockets = Set(in)
   val pins = Set(out)
 
-  def eval(environment: osiris.evaluator.Environment): Unit = {
-    environment.put(out,f(environment(in.pin.get)))
+  override def toString():String = f.toString()
+
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out,f(environment(in.pin.get)))
   }
 
   def rowWise[II](shape:Shape[II],matrixifiedPins:collection.mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -28,7 +33,9 @@ class FunctionNode[I,J,S](f:VectorFunction[I,J,S]) extends Node {
     val space = f.domain
     val node = FunctionNode.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    override def toString():String = FunctionNode.this.toString() + ".in"
+
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,f.feedback(environment(pin.get),environment.feedback(out)))
     }
 

@@ -6,7 +6,31 @@ package osiris.morphism.properties
 import osiris._
 import osiris.shape.Shape
 import morphism.{Isomorphism, Monomorphism, Morphism}
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 
+/**
+  * Contains the lmap, rmap and bimap functions.
+  *
+  * lmap takes a function A --> B and produces a function F[A,C] --> F[B,C].
+  * rmap function takes a function A --> B and produces a function F[C,A] --> F[C,B].
+  * bimap takes two functions (A --> B and C --> D) and produces a function F[A,C] --> F[B,D].
+  *
+  * There are a few constraints on the implementations on lmap, rmap and bimap that need to be met:
+  *
+  * lmap(f) = bimap(f,id), rmap(f) = bimap(id,f), bimap(f,g) = lmap(f) << rmap(g) = rmap(g) << lmap(f)
+  * lmap(id) = id, rmap(id) = id, bimap(id,id) = id
+  * lmap(f << g) = lmap(f) << lmap(g), rmap(f << g) = rmap(f) << map(g)
+  *
+  * Tuple2 is an example of a Bifunctor. In this case lmap(f) has the implementation:
+  * (x,y) => (f(x),y)
+  * rmap(f) can similarly be implemented:
+  * (x,y) => (x,f(y))
+  * and bimap(f,g):
+  * (x,y) => (f(x),g(y))
+  *
+  */
 trait Bifunctor[F[_,_]] {
 
   protected def F[A,B](a:Shape[A],b:Shape[B]):Shape[F[A,B]]
@@ -45,7 +69,7 @@ trait Bifunctor[F[_,_]] {
 
     def apply(x:F[L1,R]):F[L2,R] = lm[L1,L2,R](f,r)(x)
 
-    def serialize:Iterable[Byte] = code ++ Iterable(utilities.Serialization.Morphism.lmap) ++ f.serialize ++ r.serialize
+    def serialize:Iterable[Byte] = code ++ Iterable(v2.Morphism.constants.lmap) ++ f.serialize ++ r.serialize
 
     override def toString():String = s"${Bifunctor.this}.lmap($f,$r)"
 
@@ -60,7 +84,7 @@ trait Bifunctor[F[_,_]] {
 
     def apply(x:F[L,R1]):F[L,R2] = rm[L,R1,R2](l,f)(x)
 
-    def serialize:Iterable[Byte] = code ++ Iterable(utilities.Serialization.Morphism.rmap) ++ l.serialize ++ f.serialize
+    def serialize:Iterable[Byte] = code ++ Iterable(v2.Morphism.constants.rmap) ++ l.serialize ++ f.serialize
 
     override def toString():String = s"${Bifunctor.this}.rmap($l,$f)"
 
@@ -77,7 +101,7 @@ trait Bifunctor[F[_,_]] {
       def apply(x:F[L1,R1]):F[L2,R2] = bim(l,r)(x)
 
       def serialize:Iterable[Byte] =
-        code ++ Iterable(utilities.Serialization.Morphism.bimap) ++ l.serialize ++ r.serialize
+        code ++ Iterable(v2.Morphism.constants.bimap) ++ l.serialize ++ r.serialize
 
       override def toString():String = s"${Bifunctor.this}.bimap($l,$r)"
 
@@ -96,7 +120,7 @@ trait Bifunctor[F[_,_]] {
       def apply(x:F[L1,R]):F[L2,R] = lm[L1,L2,R](f,r)(x)
 
       def serialize:Iterable[Byte] =
-        code ++ Iterable(utilities.Serialization.Morphism.lmap) ++ f.serialize ++ r.serialize
+        code ++ Iterable(v2.Morphism.constants.lmap) ++ f.serialize ++ r.serialize
 
       override def toString():String = s"${Bifunctor.this}.lmap($f,$r)"
 
@@ -113,7 +137,7 @@ trait Bifunctor[F[_,_]] {
       def apply(x:F[L,R1]):F[L,R2] = rm[L,R1,R2](l,f)(x)
 
       def serialize:Iterable[Byte] =
-        code ++ Iterable(utilities.Serialization.Morphism.rmap) ++ l.serialize ++ f.serialize
+        code ++ Iterable(v2.Morphism.constants.rmap) ++ l.serialize ++ f.serialize
 
       override def toString():String = s"${Bifunctor.this}.lmap($l,$f)"
 
@@ -130,7 +154,7 @@ trait Bifunctor[F[_,_]] {
       def apply(x: F[L1,R1]): F[L2,R2] = bim(l,r)(x)
 
       def serialize:Iterable[Byte] =
-        code ++ Iterable(utilities.Serialization.Morphism.bimap) ++ l.serialize ++ r.serialize
+        code ++ Iterable(v2.Morphism.constants.bimap) ++ l.serialize ++ r.serialize
 
       override def toString():String = s"$this.lmap($l,$r)"
 

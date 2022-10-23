@@ -5,6 +5,9 @@ package osiris.evaluator
 
 import osiris.pin.Pin
 
+/**
+  * Contains a method for making one computation in a computation graph.
+  */
 trait Compute extends TwoStepEvaluator {
 
   def compute(comp:Computation,

@@ -4,11 +4,15 @@
 package osiris.function.linear
 
 import osiris.function.bilinear.{BilinearFunction, LinearComposeBilinear}
-import osiris.pin
+import osiris.{+, pin}
 import osiris.function.VectorFunction
 import osiris.pin.node.LinearNode
 import osiris.vector.Vector
 
+/**
+  * Base class for VectorFunctions that are linear ( f(a*x + b*y) = a*f(x) + b*f(y) ). These functions have simpler
+  * feedback functions which results in faster backpropagation.
+  */
 trait LinearFunction[I,J,S] extends VectorFunction[I,J,S] {
 
   override def apply(x:pin.Pin[J,S]):pin.Pin[I,S] = {
@@ -20,9 +24,11 @@ trait LinearFunction[I,J,S] extends VectorFunction[I,J,S] {
     c.out
   }
 
-  def feedback:LinearFunction[J,I,S]
+  def linearFeedback:LinearFunction[J,I,S]
 
-  override def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S] = feedback(y)
+  def feedback:VectorFunction[J,+[J,I],S] = linearFeedback << reindex.Extract.second(domain+target)
+
+  override def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S] = linearFeedback(y)
 
   def <<[J0](that:LinearFunction[J,J0,S]):LinearFunction[I,J0,S] = new ComposedLinear(this,that)
 

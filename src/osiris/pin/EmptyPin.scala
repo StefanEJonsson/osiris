@@ -28,5 +28,7 @@ trait EmptyPin[S] extends Pin[Nothing,S] {
 
   override def o(that:Pin[Nothing,S]):EmptyPin[S] = this
 
+  override def asEmpty[n <: Nothing with Nothing]: EmptyPin[S] = this
+
 }
 

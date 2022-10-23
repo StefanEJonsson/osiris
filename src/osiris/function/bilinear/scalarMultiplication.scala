@@ -3,14 +3,24 @@
 
 package osiris.function.bilinear
 
+import osiris.utilities.serialization.v2
 import osiris.vector.space.VectorSpace
 import osiris.vector.{Matrix, Vector}
-import osiris.I
+import osiris._
 
+/**
+  * Multiplication between scalar and vector (scalar on the left).
+  */
 case class LeftScalarProduct[I,S](target:VectorSpace[I,S]) extends BilinearFunction[I,Unit,I,S] {
 
   val left = I --> target.scalarSpace
   val right = target
+
+  override def toString():String = s"<*[$target]"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.leftScalarProduct) ++
+    target.shape.serialize
 
   override def apply(x:Vector[Either[Unit,I],S]):Vector[I,S] = {
     val xp = x.asPair[Unit,I,Either[Unit,I]]
@@ -28,10 +38,19 @@ case class LeftScalarProduct[I,S](target:VectorSpace[I,S]) extends BilinearFunct
 
 }
 
+/**
+  * Multiplication between vector and scalar (scalar on the right).
+  */
 case class RightScalarProduct[I,S](target:VectorSpace[I,S]) extends BilinearFunction[I,I,Unit,S] {
 
   val left = target
   val right = I --> target.scalarSpace
+
+  override def toString():String = s">*[$target]"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.rightScalarProduct) ++
+    target.shape.serialize
 
   override def apply(x:Vector[Either[I,Unit],S]):Vector[I,S] = {
     val xp = x.asPair[I,Unit,Either[I,Unit]]

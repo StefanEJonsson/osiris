@@ -4,8 +4,8 @@
 package osiris.pin.node.merge
 
 import osiris.+
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.pin._
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.pin.node.split.PairSplit
 import osiris.shape.Shape
@@ -13,13 +13,16 @@ import osiris.vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has two sockets and one pin. The output is the two inputs concatenated together to form a Pair.
+  */
 class PairMerge[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends Node {
 
   val pins = Set(out)
   val sockets = Set(left,right)
 
-  def eval(environment: Environment): Unit = {
-    environment.put(out, environment(left.pin.get) | environment(right.pin.get))
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out, environment(left.pin.get) | environment(right.pin.get))
   }
 
   def rowWise[I](shape:Shape[I],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
@@ -37,7 +40,7 @@ class PairMerge[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends
     val space = lSpace
     val node = PairMerge.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(out).asPair[L,R,+[L,R]].left)
     }
 
@@ -50,7 +53,7 @@ class PairMerge[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends
     val space = rSpace
     val node = PairMerge.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(out).asPair[L,R,+[L,R]].right)
     }
 

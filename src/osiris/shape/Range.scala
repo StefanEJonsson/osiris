@@ -4,6 +4,10 @@
 package osiris.shape
 
 import osiris._
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
+import osiris.utilities.serialization.v2.Primitives
 import osiris.vector.space.SequentialSpace
 
 class Range (val start:Int, val end:Int) extends Shape[Int] {
@@ -16,11 +20,11 @@ class Range (val start:Int, val end:Int) extends Shape[Int] {
   }
 
   def serialize:Iterable[Byte] =
-    Iterable(utilities.Serialization.Shape.range) ++
-      utilities.Serialization.Primitives.serializeInt(start) ++
-      utilities.Serialization.Primitives.serializeInt(end)
+    Iterable(v2.Shape.range) ++
+      Primitives.serializeInt(start) ++
+      Primitives.serializeInt(end)
 
-  def deserializeIndex(bytes: Iterator[Byte]): Int = utilities.Serialization.Primitives.deserializeInt(bytes)
+  def deserializeIndex(bytes: Iterator[Byte]): Int = Primitives.deserializeInt(bytes)
 
   def iterator = (start to end).iterator
 

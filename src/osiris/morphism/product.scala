@@ -6,7 +6,13 @@ package osiris.morphism
 import osiris._
 import osiris.morphism.properties.{AbelianProperty, Bifunctor, Distributivity, Monoidicity}
 import osiris.shape.Shape
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 
+/**
+  * Contains some of the important morphisms associated with Tuples.
+  */
 object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianProperty[*]
   with Distributivity[*,+] {
 
@@ -15,7 +21,7 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
   protected def F[A,B](a:Shape[A], b:Shape[B]):Shape[*[A,B]] = a * b
   protected def G[A,B](a:Shape[A], b:Shape[B]):Shape[+[A,B]] = a + b
 
-  protected def code = Iterable(utilities.Serialization.Morphism.product)
+  protected def code = Iterable(v2.Morphism.constants.product)
 
   override def toString():String = "product"
 
@@ -30,7 +36,7 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
       override def toString():String = s"${product.this}.bimap($l,$r)"
 
       def serialize:Iterable[Byte] =
-        Iterable(utilities.Serialization.Morphism.bimap) ++
+        Iterable(v2.Morphism.constants.bimap) ++
         l.serialize ++ r.serialize
 
       def apply(x: *[L1,R1]): *[L2,R2] = (l(x._1),r(x._2))
@@ -76,6 +82,12 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
   //multiplication by zero
 
+  /**
+    * The function that takes tuples of type (A,Nothing) and produces an element of type Nothing.
+    *
+    * Note that since Nothing has no elements (A,Nothing) has no elements either and this function is thus basically
+    * just the empty function.
+    */
   def bustLeft[A](shape:Shape[A]) = new Isomorphism[(A,Nothing),Nothing] {
 
     val domain = shape *[Nothing] O
@@ -87,10 +99,16 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     def apply(x:(A,Nothing)):Nothing = x._2
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.bustLeft) ++ shape.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.bustLeft) ++ shape.serialize
 
   }
 
+  /**
+    * The function that takes tuples of type (Nothing,A) and produces an element of type Nothing.
+    *
+    * Note that since Nothing has no elements (Nothing,A) has no elements either and this function is thus basically
+    * just the empty function.
+    */
   def bustRight[A](shape:Shape[A]) = new Isomorphism[(Nothing,A),Nothing] {
 
     val domain = O * shape
@@ -102,10 +120,15 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     def apply(x:(Nothing,A)):Nothing = x._1
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.bustRight) ++ shape.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.bustRight) ++ shape.serialize
 
   }
 
+  /**
+    * The function that takes tuples of type Nothing and produces an element of type (A,Nothing).
+    *
+    * Note that since Nothing has no elements this is basically just the empty function.
+    */
   def spookLeft[A](shape:Shape[A]):Isomorphism[Nothing,(A,Nothing)] = new Isomorphism[Nothing,(A,Nothing)] {
 
     val domain = O
@@ -117,10 +140,15 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     def apply(x:Nothing):(A,Nothing) = absurd(target)(x)
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.spookLeft) ++ shape.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.spookLeft) ++ shape.serialize
 
   }
 
+  /**
+    * The function that takes tuples of type Nothing and produces an element of type (Nothing,A).
+    *
+    * Note that since Nothing has no elements this is basically just the empty function.
+    */
   def spookRight[A](shape:Shape[A]):Isomorphism[Nothing,(Nothing,A)] = new Isomorphism[Nothing,(Nothing,A)] {
 
     val domain = O
@@ -132,12 +160,15 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     def apply(x:Nothing):(Nothing,A) = absurd(target)(x)
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.spookRight) ++ shape.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.spookRight) ++ shape.serialize
 
   }
 
   //epimorphisms
 
+  /**
+    * The function that takes a tuple and returns its first element.
+    */
   def first[A,B](l:Shape[A], r:Shape[B]) = new Morphism[(A,B),A] {
 
     val domain = l*r
@@ -147,10 +178,13 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     def apply(x:(A,B)):A = x._1
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.first) ++ l.serialize ++ r.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.first) ++ l.serialize ++ r.serialize
 
   }
 
+  /**
+    * The function that takes a tuple and returns its second element.
+    */
   def second[A,B](l:Shape[A], r:Shape[B]) = new Morphism[(A,B),B] {
 
     val domain = l*r
@@ -160,12 +194,18 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
 
     def apply(x:(A,B)):B = x._2
 
-    def serialize: Iterable[Byte] = Iterable(utilities.Serialization.Morphism.second) ++ l.serialize ++ r.serialize
+    def serialize: Iterable[Byte] = Iterable(v2.Morphism.constants.second) ++ l.serialize ++ r.serialize
 
   }
 
   //monomorphisms
 
+  /**
+    * The function that takes an element and forms a Tuple by pairing it with some constant y.
+    *
+    * x => (x,y)
+    *
+    */
   def leftPairedWith[A,B](l:Shape[A],r:Shape[B],y:B) = new Monomorphism[A,(A,B)] {
 
     val domain = l
@@ -182,10 +222,15 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
     def apply(x:A):(A,B) = (x,y)
 
     def serialize: Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.firstWith) ++ l.serialize ++ r.serialize ++ Shape.serializeIndex(y)
+      Iterable(v2.Morphism.constants.firstWith) ++ l.serialize ++ r.serialize ++ utilities.serialization.v2.Index.serializeIndex(y)
 
   }
 
+  /**
+    * The function that takes an element and forms a Tuple by pairing it with some constant x.
+    *
+    * y => (x,y)
+    */
   def rightPairedWith[A,B](l:Shape[A],r:Shape[B],x:A) = new Monomorphism[B,(A,B)] {
 
     val domain = r
@@ -202,11 +247,16 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
     def apply(y:B):(A,B) = (x,y)
 
     def serialize: Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.secondWith) ++ l.serialize ++ r.serialize ++ Shape.serializeIndex(x)
+      Iterable(v2.Morphism.constants.secondWith) ++ l.serialize ++ r.serialize ++ utilities.serialization.v2.Index.serializeIndex(x)
 
 
   }
 
+  /**
+    * The function that takes an element and forms a Tuple by pairing it with itself.
+    *
+    * x => (x,x)
+    */
   def copy[A](shape:Shape[A]):Monomorphism[A,(A,A)] = new Monomorphism[A,(A,A)] {
 
     val domain = shape
@@ -224,20 +274,29 @@ object product extends Bifunctor[*] with Monoidicity[*,Unit] with AbelianPropert
     def apply(x:A):(A,A) = (x,x)
 
     def serialize: Iterable[Byte] =
-      Iterable(utilities.Serialization.Morphism.copy) ++ shape.serialize
+      Iterable(v2.Morphism.constants.copy) ++ shape.serialize
 
   }
 
+  /**
+    * Computes the pseudo-inverse of product.lmap(f) given that f is a MonoMorphism.
+    */
   def lMapMonoInverse[L1,L2,R](f:Monomorphism[L1,L2], r:Shape[R]):Morphism[*[L2,R],Either[*[L1,R],Unit]] =
     sum.rmap(f.domain*r,unit(I*r)) <<
     rightDistr(f.domain,I,r) <<
     lmap(f.monoInverse,r)
 
+  /**
+    * Computes the pseudo-inverse of product.rmap(f) given that f is a MonoMorphism.
+    */
   def rMapMonoInverse[L,R1,R2](l:Shape[L],f:Monomorphism[R1,R2]):Morphism[*[L,R2],+[*[L,R1],Unit]] =
     sum.rmap(l*f.domain,unit(l*I))  <<
     leftDistr(l,f.domain,I)         <<
     rmap(l,f.monoInverse)
 
+  /**
+    * Computes the pseudo-inverse of product.bimap(l,r) given that l and r are MonoMorphism.
+    */
   def biMapMonoInverse[L1,L2,R1,R2](l:Monomorphism[L1,L2], r:Monomorphism[R1,R2]):Morphism[*[L2,R2],+[*[L1,R1],Unit]] =
     sum.rmap(l.domain*r.domain,unit(I + I)) <<
     sum.assocRight(l.domain*r.domain,I,I) <<

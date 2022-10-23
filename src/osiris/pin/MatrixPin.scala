@@ -3,7 +3,7 @@
 
 package osiris.pin
 
-import osiris.evaluator.Environment
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.function.{ScalarFunction, VectorFunction}
 import osiris.function.bilinear.{MatrixMatrixProduct, MatrixVectorProduct}
 import osiris.function.linear.{ColSum, RowSum}
@@ -15,7 +15,7 @@ import osiris.pin.node.replace.{ReplaceCol, ReplaceRow}
 import osiris.pin.node.split.RowSplit
 import osiris.pin.variable.Constant
 import osiris.shape.Shape
-import osiris.{Objective, O, function, utilities}
+import osiris.{O, Objective, function, utilities}
 import osiris.vector.{Matrix, Vector}
 import osiris.vector.space.{MatrixSpace, VectorSpace}
 
@@ -98,7 +98,7 @@ trait MatrixPin[I,J,S] extends Pin[(I,J),S] {
       lazy val node = new Node {
         val sockets = Set()
         lazy val pins = Set(left)
-        def eval(environment: Environment): Unit = {}
+        def eval(environment: VectorEnvironment): Unit = {}
         def rowWise[I](shape:Shape[I],matrixifiedPins:collection.mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
           matrixifiedPins(left) =
             new function.linear.reindex.RowCopy(shape-->space.scalarSpace,space)(left).asMatrix
@@ -110,7 +110,7 @@ trait MatrixPin[I,J,S] extends Pin[(I,J),S] {
       lazy val node = new Node {
         val sockets = Set()
         lazy val pins = Set(right)
-        def eval(environment: Environment): Unit = {}
+        def eval(environment: VectorEnvironment): Unit = {}
         def rowWise[I](shape:Shape[I],matrixifiedPins:collection.mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
           matrixifiedPins(right) =
             new function.linear.reindex.RowCopy(shape-->space.scalarSpace,t.space.inner)(right).asMatrix[I,JThat,(I,JThat)]
@@ -230,5 +230,7 @@ trait MatrixPin[I,J,S] extends Pin[(I,J),S] {
       utilities.same(this.space.inner,that.space.outer),
       that.space.inner
     )(this|that).asMatrix
+
+  override def asMatrix[II,JJ,P<:(II,JJ) with (I,J)]:MatrixPin[II,JJ,S] = this.asInstanceOf[MatrixPin[II,JJ,S]]
 
 }

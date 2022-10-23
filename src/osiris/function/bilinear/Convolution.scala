@@ -4,15 +4,29 @@
 package osiris.function.bilinear
 
 import osiris._
+import osiris.utilities.serialization.v2
 import osiris.vector._
 import osiris.vector.space.{SequentialSpace, VectorSpace}
 
 import scala.reflect.ClassTag
 
+/**
+  * One dimensional discrete convolution of two vectors.
+  *
+  * @param left
+  * @param right
+  * @param target
+  * @tparam S The scalar field
+  */
 class Convolution[S : ClassTag](val left:SequentialSpace[S],val right:SequentialSpace[S],
                                            val target:SequentialSpace[S])
   extends BilinearFunction[Int,Int,Int,S] {
 
+  override def toString():String = s"Convolution[$left $right $target]"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.convolution) ++
+    left.shape.serialize ++ right.shape.serialize ++ target.shape.serialize
 
   override def apply(x:Vector[Either[Int,Int],S]):Vector[Int,S] = {
     val xp = x.asPair[Int,Int,+[Int,Int]]
@@ -44,5 +58,12 @@ class Convolution[S : ClassTag](val left:SequentialSpace[S],val right:Sequential
 
   lazy val rightFeedback =
     new Convolution(target,-left.shape --> scalarSpace,right).permuteRight(morphism.int.inv(right.shape))
+
+}
+
+object Convolution {
+
+  def apply[S : ClassTag](left:SequentialSpace[S],right:SequentialSpace[S],target:SequentialSpace[S]):Convolution[S] =
+    new Convolution(left,right,target)
 
 }

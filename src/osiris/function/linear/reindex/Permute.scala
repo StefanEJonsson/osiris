@@ -3,29 +3,35 @@
 
 package osiris.function.linear.reindex
 
-import osiris.morphism.{Isomorphism, constant, product}
-import osiris.vector.space.{MatrixSpace, PairSpace, VectorSpace}
-import osiris.{I, morphism}
+import osiris.morphism.{Isomorphism, product}
+import osiris.utilities.serialization.v2
+import osiris.vector.space.VectorSpace
+import osiris.{ScalarSpace, morphism}
 
-class Permute[I,J,S](t:VectorSpace[I,S], d:VectorSpace[J,S], f:Isomorphism[I,J])
-  extends ReIndex[I,J,S](t,d,f) {
+class Permute[I,J,S](s:ScalarSpace[S],f:Isomorphism[I,J])
+  extends ReIndex[I,J,S](s,f) {
 
-  def feedback = new Permute(d,t,f.inverse)
+  override def toString():String = s"Permute($f)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.permute) ++ f.serialize
+
+  def linearFeedback = new Permute(s,f.inverse)
 
 }
 
 object Permute {
 
   def id[I, S](domain: VectorSpace[I, S]): Permute[I, I, S] =
-    new Permute(domain, domain, morphism.id[I](domain.shape))
+    new Permute(domain.scalarSpace, morphism.id[I](domain.shape))
 
   def swap[L, R, S](left: VectorSpace[L, S],
                                  right: VectorSpace[R, S]): Permute[Either[R, L], Either[L, R], S] =
-    new Permute(right + left, left + right, morphism.sum.commute(right.shape,left.shape))
+    new Permute(left.scalarSpace, morphism.sum.commute(right.shape,left.shape))
 
   def transpose[I,J,S](outer: VectorSpace[I, S],
-                                  inner: VectorSpace[J, S]): Permute[(J, I),(I, J),S] =
-    new Permute(inner*outer, outer*inner, product.commute(inner.shape,outer.shape))
+                       inner: VectorSpace[J, S]): Permute[(J, I),(I, J),S] =
+    new Permute(inner.scalarSpace,product.commute(inner.shape,outer.shape))
 
 }
 

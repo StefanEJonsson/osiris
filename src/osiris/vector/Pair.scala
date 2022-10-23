@@ -38,6 +38,9 @@ class SimplePair[L,R,S] (val left:Vector[L,S], val right:Vector[R,S])
 
   override def swap:Pair[R,L,S] = Pair(right,left)
 
+  def serialize: Iterable[Byte] =
+    Iterable(utilities.serialization.v2.Vector.pair) ++ left.serialize ++ right.serialize
+
 }
 
 object Pair {

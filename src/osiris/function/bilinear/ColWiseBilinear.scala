@@ -8,6 +8,20 @@ import morphism.product
 import vector.{Matrix, Pair, Vector}
 import vector.space.VectorSpace
 
+import utilities.serialization.v2
+
+/**
+  * Takes a BilinearFunction and constructs a new BilinearFunction on matrices that is computed by applying the
+  * original BilinearFunction on each column of the input matrices.
+  *
+  * @param inner The vector space that rows of the matrices (both input matrices and the output) belong to.
+  * @param f The original BilinearFunction
+  * @tparam I The index type of vectors returned by f.
+  * @tparam J The index type used to access columns.
+  * @tparam L The index type of the first argument to f.
+  * @tparam R The index type of the second argument to f.
+  * @tparam S The scalar field
+  */
 class ColWiseBilinear[I,J,L,R,S](inner:VectorSpace[J,S], f:BilinearFunction[I,L,R,S])
   extends BilinearFunction[(I,J),(L,J),(R,J),S] {
 
@@ -15,6 +29,12 @@ class ColWiseBilinear[I,J,L,R,S](inner:VectorSpace[J,S], f:BilinearFunction[I,L,
   val right = f.right * inner
 
   val target = f.target * inner
+
+  override def toString():String = s"ColumnWise[$inner]($f)"
+
+  def serialize:Iterable[Byte] =
+    Iterable(v2.Function.constants.colWiseBilinear) ++
+    inner.shape.serialize ++ f.serialize
 
   override def apply(x:Vector[Either[(L,J),(R,J)],S]):Matrix[I,J,S] = {
     val xp = x.asPair
@@ -48,4 +68,12 @@ class ColWiseBilinear[I,J,L,R,S](inner:VectorSpace[J,S], f:BilinearFunction[I,L,
 
   def leftFeedback = new ColWiseBilinear(inner,f.leftFeedback)
   def rightFeedback = new ColWiseBilinear(inner,f.rightFeedback)
+
+}
+
+object ColWiseBilinear {
+
+  def apply[I,J,L,R,S](inner:VectorSpace[J,S], f:BilinearFunction[I,L,R,S]):ColWiseBilinear[I,J,L,R,S] =
+    new ColWiseBilinear(inner,f)
+
 }

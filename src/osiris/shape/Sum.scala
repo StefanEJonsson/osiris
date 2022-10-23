@@ -3,9 +3,15 @@
 
 package osiris.shape
 
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
 import osiris.{ScalarSpace, container, utilities}
 import osiris.vector.space.PairSpace
 
+/**
+  * The tagged union of two shapes.
+  */
 class Sum[I,J] (val a:Shape[I],val b:Shape[J]) extends Shape[Either[I,J]] {
 
   override def size = a.size + b.size
@@ -17,13 +23,13 @@ class Sum[I,J] (val a:Shape[I],val b:Shape[J]) extends Shape[Either[I,J]] {
     case _ => false
   }
 
-  def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Shape.sum) ++ a.serialize ++ b.serialize
+  def serialize:Iterable[Byte] = Iterable(v2.Shape.sum) ++ a.serialize ++ b.serialize
 
   def deserializeIndex(bytes:Iterator[Byte]):Either[I,J] = {
     val h = bytes.next()
-    if (h == utilities.Serialization.Index.left) {
+    if (h == v2.Index.left) {
       Left(a.deserializeIndex(bytes))
-    } else if (h == utilities.Serialization.Index.right) {
+    } else if (h == v2.Index.right) {
       Right(b.deserializeIndex(bytes))
     } else {
       throw new IllegalArgumentException(s"$h is neither left nor right")

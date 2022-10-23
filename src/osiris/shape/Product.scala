@@ -3,9 +3,13 @@
 
 package osiris.shape
 
+import osiris.utilities.serialization.v2
 import osiris.{ScalarSpace, container, utilities}
 import osiris.vector.space.MatrixSpace
 
+/**
+  * The cartesian product of two shapes.
+  */
 class Product[I,J] (val a:Shape[I],val b:Shape[J]) extends Shape[(I,J)] {
 
   override def size = a.size * b.size
@@ -17,7 +21,7 @@ class Product[I,J] (val a:Shape[I],val b:Shape[J]) extends Shape[(I,J)] {
     case _ => false
   }
 
-  def serialize:Iterable[Byte] = Iterable(utilities.Serialization.Shape.product) ++ a.serialize ++ b.serialize
+  def serialize:Iterable[Byte] = Iterable(v2.Shape.product) ++ a.serialize ++ b.serialize
 
   def deserializeIndex(bytes:Iterator[Byte]):(I,J) = {
     val i = a.deserializeIndex(bytes)

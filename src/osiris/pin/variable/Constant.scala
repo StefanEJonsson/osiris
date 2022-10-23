@@ -4,9 +4,9 @@
 package osiris.pin.variable
 
 import osiris._
+import osiris.evaluator.environment.VectorEnvironment
 import osiris.morphism.{Morphism, bool}
 import osiris.pin.{MatrixPin, Pin}
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import osiris.shape.Shape
 import osiris.vector._
@@ -14,6 +14,9 @@ import osiris.vector.space.{MatrixSpace, VectorSpace}
 
 import scala.collection.mutable
 
+/**
+  * A pin that represents a constant value.
+  */
 class Constant[I,S] (value:Vector[I,S]) extends Pin[I,S] {
 
   val space = value.space
@@ -23,8 +26,8 @@ class Constant[I,S] (value:Vector[I,S]) extends Pin[I,S] {
     val sockets = Set()
     val pins = Set(Constant.this)
 
-    def eval(environment: Environment): Unit = {
-      environment.put(Constant.this,value)
+    def eval(environment: VectorEnvironment): Unit = {
+      environment.putValue(Constant.this,value)
     }
 
     def rowWise[II](shape:Shape[II],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -34,10 +37,10 @@ class Constant[I,S] (value:Vector[I,S]) extends Pin[I,S] {
 
   }
 
-  override def toString():String = space match {
+  /*override def toString():String = space match {
     case (_:MatrixSpace[_,_,S]) => s"constant =\n $value"
     case _ => s"Constant = $value"
-  }
+  }*/
 
 }
 

@@ -29,4 +29,6 @@ trait SequentialPin[S] extends Pin[Int,S] {
 
   override def o(that:Pin[Int,S]):SequentialPin[S] = super.o(that).asSequential
 
+  override def asSequential[int <: Int with Int]: SequentialPin[S] = this
+
 }

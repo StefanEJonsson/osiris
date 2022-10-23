@@ -4,23 +4,27 @@
 package osiris.pin.node.split
 
 import osiris._
+import osiris.evaluator.environment.VectorEnvironment
 import pin.node.Node
 import pin.node.merge.PairMerge
 import pin.{MatrixPin, Pin, Socket}
-import osiris.evaluator.Environment
 import osiris.shape.Shape
 import vector.space.VectorSpace
 
 import scala.collection.mutable
 
+/**
+  * Has one socket of Pair type and two pins. The output of the first pin is the first component of the pair. The output
+  * of the second pin is the second component of the pair.
+  */
 class PairSplit[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends Node {
 
   val pins = Set(left,right)
   val sockets = Set(in)
 
-  def eval(environment: Environment): Unit = {
-    environment.put(left , environment(in.pin.get).asPair[L,R,+[L,R]].left )
-    environment.put(right, environment(in.pin.get).asPair[L,R,+[L,R]].right)
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(left , environment(in.pin.get).asPair[L,R,+[L,R]].left )
+    environment.putValue(right, environment(in.pin.get).asPair[L,R,+[L,R]].right)
   }
 
   def rowWise[I](shape:Shape[I],matrixifiedPins:mutable.Map[Pin[_,_],MatrixPin[I,_,_]]): Unit = {
@@ -41,7 +45,7 @@ class PairSplit[L,R,S](lSpace:VectorSpace[L,S], rSpace:VectorSpace[R,S]) extends
     val space = lSpace + rSpace
     val node = PairSplit.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(left) | environment.feedback(right))
     }
 

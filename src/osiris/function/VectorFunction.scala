@@ -6,11 +6,14 @@ package osiris.function
 import osiris._
 import osiris.function.bilinear._
 import osiris.function.linear.{Addition, ScalarProduct, Sum}
-import osiris.function.linear.reindex.Extract
 import vector._
-import morphism._
 import osiris.function.map.{BiMap, ElemWise}
-import osiris.vector.space.{SingleSpace, VectorSpace}
+import osiris.utilities.serialization
+import osiris.utilities.serialization.v2
+import osiris.utilities.serialization.Serialization
+import osiris.vector.space.{VectorSpace}
+
+import scala.reflect.ClassTag
 
 trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
 
@@ -20,6 +23,8 @@ trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
   val target:VectorSpace[I,S]
 
   protected def scalarSpace = utilities.same(domain.scalarSpace,target.scalarSpace)
+
+  def serialize:Iterable[Byte]
 
   def apply(x:pin.Pin[J,S]):pin.Pin[I,S] = {
     val comp = new pin.node.FunctionNode(this)
@@ -35,7 +40,9 @@ trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 
-  def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S]
+  def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S] = feedback(x|y)
+
+  def feedback:VectorFunction[J,+[J,I],S]
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 
@@ -44,10 +51,10 @@ trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
   def apply(i:I):VectorFunction[Unit,J,S] = Extract.element(target,i) << this
 
   def getLeft[L,R,II<:Either[L,R] with I] : VectorFunction[L,J,S] =
-    Extract.left(target.asPairSpace[L,R,II]) << this.asInstanceOf[VectorFunction[Either[L,R],J,S]]
+    Extract.first(target.asPairSpace[L,R,II]) << this.asInstanceOf[VectorFunction[Either[L,R],J,S]]
 
   def getRight[L,R,II<:Either[L,R] with I] : VectorFunction[R,J,S] =
-    Extract.right(target.asPairSpace[L,R,II]) << this.asInstanceOf[VectorFunction[Either[L,R],J,S]]
+    Extract.second(target.asPairSpace[L,R,II]) << this.asInstanceOf[VectorFunction[Either[L,R],J,S]]
 
   def row[Outer,Inner,II<:(Outer,Inner) with I](i:Outer):VectorFunction[Inner,J,S] =
     Extract.row[Outer,Inner,S](target.asMatrixSpace,i) <<
@@ -83,13 +90,13 @@ trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
 
 
   def -*||[I2,J2](that:VectorFunction[(I,I2),J2,S]):VectorFunction[I2,Either[J,J2],S] =
-    VectorMatrixProduct(this.target,that.target.asMatrixSpace[I,I2,(I,I2)].inner) << (this | that) //TODO is there some better way (getting rid of type parameters)?
+    VectorMatrixProduct(this.target,that.target.asMatrixSpace[I,I2,(I,I2)].inner) << (this | that)
 
-  def =*|[IL,IR,IP<:(IL,IR) with I,J2](that:VectorFunction[IR,J2,S]):VectorFunction[IL,Either[J,J2],S] =  //TODO some way of getting rid of 'asInstanceOf'??
+  def =*|[IL,IR,IP<:(IL,IR) with I,J2](that:VectorFunction[IR,J2,S]):VectorFunction[IL,Either[J,J2],S] =
     MatrixVectorProduct(this.target.asMatrixSpace[IL,IR,IP].outer,that.target) <<
       (this.asInstanceOf[VectorFunction[(IL,IR),J,S]] | that)
 
-  def =*||[IL,IR,IP<:(IL,IR) with I,I2,J2](that:VectorFunction[(IR,I2),J2,S]):VectorFunction[(IL,I2),Either[J,J2],S] = { //TODO try to simplify
+  def =*||[IL,IR,IP<:(IL,IR) with I,I2,J2](that:VectorFunction[(IR,I2),J2,S]):VectorFunction[(IL,I2),Either[J,J2],S] = {
     val thisSpace = this.target.asMatrixSpace[IL, IR, IP]
     val thatSpace = that.target.asMatrixSpace[IR, I2, (IR, I2)]
     val middleSpace = utilities.same(thisSpace.inner, thatSpace.outer)
@@ -99,17 +106,10 @@ trait VectorFunction[I,J,S] extends (Vector[J,S] => Vector[I,S]) {
 
 }
 
-case class Composition[I,K,J,S](outer:VectorFunction[I,K,S], inner:VectorFunction[K,J,S])
-  extends VectorFunction[I,J,S] {
+object VectorFunction {
 
-  val domain = inner.domain
-  val middle = utilities.same(outer.domain, inner.target)
-  val target = outer.target
-
-  override def toString(): String = s"($outer < $inner)"
-
-  def apply(x: Vector[J, S]): Vector[I, S] = outer(inner(x))
-
-  def feedback(x:Vector[J,S],y:Vector[I,S]):Vector[J,S] = inner.feedback(x,outer.feedback(inner(x),y))
+  def serialize[I,J,S](f:VectorFunction[I,J,S]):Iterable[Byte] =
+    Iterable(Serialization.version) ++ v2.ScalarSpace.serialize(f.scalarSpace) ++
+    f.serialize
 
 }

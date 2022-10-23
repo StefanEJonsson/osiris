@@ -7,6 +7,9 @@ import osiris._
 import morphism.Morphism
 import vector.Single
 
+/**
+  * VectorSpace used to construct Singleton vectors (vectors containing only one element).
+  */
 class SingleSpace[S] (val scalarSpace:ScalarSpace[S])
   extends container.companion.SingleCompanion[S] with VectorSpace[Unit,S] {
 
@@ -17,8 +20,6 @@ class SingleSpace[S] (val scalarSpace:ScalarSpace[S])
   override def apply(f:Unit => S):Single[S] = new Single(f())
 
   override def apply(f:Unit => pin.Pin[Unit,S]):pin.SinglePin[S] = super.apply(f).asSingle
-
-  private[space] def parseElems(bytes:Iterator[Byte]):Single[S] = this(_ => scalarSpace.deserialize(bytes))
 
   /* ---------------------------------------------------------------------------------------------------------------- */
 

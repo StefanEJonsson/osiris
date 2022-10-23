@@ -4,12 +4,15 @@
 package osiris.pin
 
 import osiris._
+import osiris.evaluator.environment.VectorEnvironment
 import pin.node.merge.PairMerge
 import pin.node.split.PairSplit
-import osiris.evaluator.Environment
 import osiris.pin.node.Node
 import vector.space.VectorSpace
 
+/**
+  * Sockets are used to represent inputs for computations (Nodes) in the computation graph.
+  */
 trait Socket[I,S] {
 
   val space:VectorSpace[I,S]
@@ -22,7 +25,7 @@ trait Socket[I,S] {
 
   def feedbackDependencies:Set[Either[Pin[_,_],Pin[_,_]]]
 
-  def evaluateFeedback(environment: Environment): Unit
+  def evaluateFeedback(environment: VectorEnvironment): Unit
 
   def connect(pin:Pin[I,S]):Unit = {
     p = Option(pin)

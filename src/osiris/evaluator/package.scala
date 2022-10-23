@@ -7,6 +7,10 @@ import osiris.pin.Pin
 
 package object evaluator {
 
+  /**
+    * Removes a pin from its computation graph.
+    * @param pin the pin to be removed.
+    */
   def remove(pin:Pin[_,_]): Unit = {
     val toBeRemoved = collection.mutable.Queue[Pin[_,_]](pin)
     while (toBeRemoved.nonEmpty) {

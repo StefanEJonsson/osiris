@@ -32,4 +32,6 @@ trait SinglePin[S] extends Pin[Unit,S] {
 
   override def o(that:Pin[Unit,S]):SinglePin[S] = Multiplication(space.scalarSpace)(this|that).asSingle
 
+  override def asSingle[u<:Unit with Unit]:SinglePin[S] = this
+
 }

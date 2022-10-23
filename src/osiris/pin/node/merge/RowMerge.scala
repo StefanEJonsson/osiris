@@ -5,8 +5,8 @@ package osiris.pin.node.merge
 
 import osiris._
 import container.companion.ContainerCompanion
+import osiris.evaluator.environment.VectorEnvironment
 import pin.{MatrixPin, Pin, Socket}
-import osiris.evaluator.Environment
 import osiris.morphism.product
 import osiris.pin.node.Node
 import osiris.pin.node.split.RowSplit
@@ -16,6 +16,9 @@ import vector.space.MatrixSpace
 
 import scala.collection.mutable
 
+/**
+  * Has N sockets of vector type and one pin of matrix type. The output is a matrix containing the inputs as rows.
+  */
 class RowMerge[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
 
   private val socketSpace:ContainerCompanion[I,In] = space.outer.shape --> [In]()
@@ -24,8 +27,8 @@ class RowMerge[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
   val pins = Set(out)
   val sockets = in.iterator.toSet //TODO
 
-  def eval(environment: Environment): Unit = {
-    environment.put(out, space.rows(i => environment(in(i).pin.get)))
+  def eval(environment: VectorEnvironment): Unit = {
+    environment.putValue(out, space.rows(i => environment(in(i).pin.get)))
   }
 
   def rowWise[II](shape: Shape[II],matrixifiedPins: mutable.Map[Pin[_,_],MatrixPin[II,_,_]]): Unit = {
@@ -52,7 +55,7 @@ class RowMerge[I,J,S](space:MatrixSpace[I,J,S]) extends Node {
     val space = RowMerge.this.space.inner
     val node = RowMerge.this
 
-    def evaluateFeedback(environment: Environment): Unit = {
+    def evaluateFeedback(environment: VectorEnvironment): Unit = {
       environment.putFeedback(pin.get,environment.feedback(out).asMatrix[I,J,(I,J)].row(i))
     }
 
